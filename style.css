@@ -1,0 +1,38 @@
+body {
+  font-family: Arial, sans-serif;
+  width: 350px;
+  padding: 10px;
+}
+
+h1 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+#folder-list > div {
+  margin-bottom: 10px;
+}
+
+.folder-title {
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+}
+
+.chat-item {
+  margin-left: 15px;
+  cursor: pointer;
+  color: blue;
+  text-decoration: underline;
+}
+
+button {
+  margin: 5px 5px 10px 0;
+  padding: 5px 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}

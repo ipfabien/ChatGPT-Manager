@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>ChatGPT Manager</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <h1>ChatGPT Manager</h1>
+
+  <div id="folder-list"></div>
+
+  <button id="add-folder-btn">+ Ajouter dossier</button>
+  <button id="new-chat-btn">+ Nouveau chat</button>
+
+  <div id="new-chat-form" class="hidden">
+    <h2>Créer un nouveau chat</h2>
+    <label for="chat-name">Nom du chat :</label><br/>
+    <input type="text" id="chat-name" placeholder="Nom du chat" /><br/><br/>
+
+    <label for="chat-url">URL du chat ChatGPT :</label><br/>
+    <input type="url" id="chat-url" placeholder="https://chat.openai.com/chat/..." /><br/><br/>
+
+    <label for="chat-folder">Dossier :</label><br/>
+    <select id="chat-folder"></select><br/><br/>
+
+    <button id="save-chat-btn">Enregistrer</button>
+    <button id="cancel-chat-btn">Annuler</button>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
