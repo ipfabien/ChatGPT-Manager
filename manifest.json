@@ -1,15 +1,14 @@
 {
   "manifest_version": 3,
   "name": "ChatGPT Manager",
-  "version": "1.0",
-  "description": "Organisez vos chats ChatGPT en dossiers, nommez-les et accédez rapidement.",
+  "version": "1.0.5",
+  "description": "Gestionnaire d'onglets ChatGPT avec dossiers et chats.",
   "permissions": ["storage", "tabs"],
   "action": {
     "default_popup": "popup.html",
-    "default_icon": {
-      "16": "icons/icon48.png",
-      "48": "icons/icon48.png",
-      "128": "icons/icon48.png"
-    }
+    "default_icon": "icon.png"
+  },
+  "icons": {
+    "128": "icon.png"
   }
 }

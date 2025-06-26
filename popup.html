@@ -2,30 +2,148 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ChatGPT Manager</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    html, body {
+      width: 400px;
+      height: 600px;
+      margin: 0; padding: 10px;
+      font-family: Arial, sans-serif;
+      box-sizing: border-box;
+      overflow: auto;
+    }
+    #app {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    #tree-container {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      padding: 10px;
+      background: #f9f9f9;
+      margin-bottom: 10px;
+    }
+    /* Boutons globaux supprimés pour éviter confusion */
+    /* .buttons-global {
+      margin-bottom: 10px;
+      display: flex;
+      gap: 10px;
+    } */
+    button {
+      cursor: pointer;
+      padding: 6px 12px;
+      font-size: 14px;
+    }
+    .btn-green {
+      background-color: #4caf50;
+      border: none;
+      color: white;
+      border-radius: 4px;
+    }
+    .btn-green:hover {
+      background-color: #45a049;
+    }
+    .btn-red {
+      background-color: #f44336;
+      border: none;
+      color: white;
+      border-radius: 4px;
+    }
+    .btn-red:hover {
+      background-color: #d73220;
+    }
+    .popup-form {
+      background: white;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+    .popup-form label {
+      display: block;
+      margin-bottom: 4px;
+      margin-top: 8px;
+    }
+    .popup-form input[type="text"],
+    .popup-form input[type="url"] {
+      width: 100%;
+      padding: 6px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    .form-buttons {
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    /* Style boutons petits pour ajout dans dossier */
+    .btn-small {
+      font-size: 12px;
+      padding: 2px 6px;
+      margin-left: 8px;
+      border-radius: 3px;
+      vertical-align: middle;
+    }
+    .tree-node-line {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .folder-name {
+      font-weight: bold;
+      cursor: default;
+      flex-grow: 1;
+    }
+    .chat-name {
+      cursor: pointer;
+      flex-grow: 1;
+      color: #007bff;
+      text-decoration: underline;
+    }
+    .edit-btn {
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-size: 14px;
+      padding: 0 6px;
+      color: #555;
+    }
+    .edit-btn:hover {
+      color: #000;
+    }
+  </style>
 </head>
 <body>
-  <h1>ChatGPT Manager</h1>
+  <div id="app">
+    <h1>ChatGPT Manager</h1>
+    <div id="tree-container"></div>
 
-  <div id="folder-list"></div>
+    <!-- Formulaire ajout/édition dossier -->
+    <form id="add-folder-form" class="popup-form" style="display:none;">
+      <label for="folder-name">Nom du dossier :</label>
+      <input type="text" id="folder-name" name="folder-name" required autocomplete="off" />
+      <div class="form-buttons">
+        <button type="submit" class="btn-green">Valider</button>
+        <button type="button" id="cancel-folder" class="btn-red">Annuler</button>
+      </div>
+    </form>
 
-  <button id="add-folder-btn">+ Ajouter dossier</button>
-  <button id="new-chat-btn">+ Nouveau chat</button>
-
-  <div id="new-chat-form" class="hidden">
-    <h2>Créer un nouveau chat</h2>
-    <label for="chat-name">Nom du chat :</label><br/>
-    <input type="text" id="chat-name" placeholder="Nom du chat" /><br/><br/>
-
-    <label for="chat-url">URL du chat ChatGPT :</label><br/>
-    <input type="url" id="chat-url" placeholder="https://chat.openai.com/chat/..." /><br/><br/>
-
-    <label for="chat-folder">Dossier :</label><br/>
-    <select id="chat-folder"></select><br/><br/>
-
-    <button id="save-chat-btn">Enregistrer</button>
-    <button id="cancel-chat-btn">Annuler</button>
+    <!-- Formulaire ajout/édition chat -->
+    <form id="add-chat-form" class="popup-form" style="display:none;">
+      <label for="chat-name">Nom du chat :</label>
+      <input type="text" id="chat-name" name="chat-name" required autocomplete="off" />
+      <label for="chat-link">Lien du chat ChatGPT :</label>
+      <input type="url" id="chat-link" name="chat-link" required placeholder="https://chat.openai.com/..." />
+      <div class="form-buttons">
+        <button type="submit" class="btn-green">Valider</button>
+        <button type="button" id="cancel-chat" class="btn-red">Annuler</button>
+      </div>
+    </form>
   </div>
 
   <script src="popup.js"></script>

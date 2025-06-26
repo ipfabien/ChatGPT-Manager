@@ -1,38 +1,100 @@
 body {
   font-family: Arial, sans-serif;
-  width: 350px;
-  padding: 10px;
+  font-size: 14px;
+  margin: 10px;
+  width: 450px; /* taille popup plus raisonnable */
 }
 
-h1 {
-  font-size: 18px;
-  margin-bottom: 10px;
+#tree-container ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0;
 }
 
-#folder-list > div {
-  margin-bottom: 10px;
+.tree-node-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 0;
 }
 
-.folder-title {
-  font-weight: bold;
+.toggle-icon {
+  user-select: none;
+  width: 16px;
+  text-align: center;
+}
+
+.folder-name, .chat-name {
   cursor: pointer;
+  flex-grow: 1;
   user-select: none;
 }
 
-.chat-item {
-  margin-left: 15px;
+button.edit-btn {
+  background: none;
+  border: none;
   cursor: pointer;
-  color: blue;
-  text-decoration: underline;
-}
-
-button {
-  margin: 5px 5px 10px 0;
-  padding: 5px 8px;
   font-size: 14px;
+  padding: 2px 6px;
+  color: #444;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+button.edit-btn:hover {
+  background-color: #eee;
+}
+
+.btn-green {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
 }
 
-.hidden {
-  display: none;
+.btn-green:hover {
+  background-color: #218838;
+}
+
+.btn-small {
+  font-size: 14px;
+  padding: 3px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Formulaires */
+form {
+  margin-top: 10px;
+}
+
+form label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+
+form input[type="text"] {
+  width: 100%;
+  padding: 4px;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+/* Boutons d'annulation */
+button#cancel-folder, button#cancel-chat {
+  background-color: #dc3545;
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+button#cancel-folder:hover, button#cancel-chat:hover {
+  background-color: #c82333;
 }
