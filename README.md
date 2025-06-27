@@ -4,6 +4,9 @@ Une extension Chrome pour organiser et gérer vos conversations ChatGPT et autre
 
 ## Fonctionnalités
 
+### Version 1.0.7
+- Modifications d'affichage
+
 ### Version 1.0.6
 - **Drag and Drop** : Glissez-déposez les chats et dossiers pour les réorganiser facilement
 - Utilisez l'icône ⋮⋮ pour déplacer les éléments
@@ -45,6 +48,10 @@ Une extension Chrome pour organiser et gérer vos conversations ChatGPT et autre
 - Cliquez sur ✏️ pour modifier un chat
 - Cliquez sur 🗑️ pour supprimer un chat
 
+### Réinitialisation
+- Cliquez sur 🔄 Reset pour supprimer toutes les données et remettre l'extension dans son état initial
+- Une confirmation sera demandée avant la suppression définitive
+
 ## Structure des données
 
 L'extension sauvegarde vos données localement dans le stockage Chrome avec la structure suivante :
@@ -52,7 +59,7 @@ L'extension sauvegarde vos données localement dans le stockage Chrome avec la s
 ```json
 {
   "id": "root",
-  "name": "Mes Chats",
+  "name": "🏠 Accueil",
   "type": "folder",
   "children": [
     {
@@ -82,5 +89,6 @@ Un mode debug est intégré à l'extension :
 
 ## Versions
 
+- **1.0.7** : Renommage du dossier racine en "🏠 Accueil"
 - **1.0.6** : Ajout du drag and drop pour réorganiser les chats et dossiers, tri automatique, mode debug
 - **1.0.5** : Version de base avec gestion des dossiers et chats

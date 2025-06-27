@@ -8,6 +8,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatNameInput = document.getElementById("chat-name");
   const chatLinkInput = document.getElementById("chat-link");
 
+  // Ajout du listener pour le bouton Reset
+  const btnReset = document.getElementById('btn-reset');
+  if (btnReset) btnReset.addEventListener('click', resetData);
+
+  // Ajout du listener pour le bouton Logs
+  const btnLogs = document.getElementById('btn-logs');
+  if (btnLogs) btnLogs.addEventListener('click', toggleDebugZone);
+
   let data = null;
   let currentEditNode = null;
   let currentAddParentId = "root"; // dossier où on ajoute un nouvel élément
@@ -22,13 +30,41 @@ document.addEventListener("DOMContentLoaded", () => {
     chrome.storage.local.set({ chatManagerData: data });
   }
 
+  function resetData() {
+    if (confirm("Êtes-vous sûr de vouloir réinitialiser toutes les données ? Cette action supprimera tous vos dossiers et chats et ne peut pas être annulée.")) {
+      // Supprimer toutes les données du localStorage
+      chrome.storage.local.clear(() => {
+        // Réinitialiser la variable data avec les valeurs par défaut
+        data = {
+          id: "root",
+          name: "🏠 Accueil",
+          type: "folder",
+          children: [],
+          expanded: true,
+        };
+        
+        // Sauvegarder les données par défaut
+        saveData();
+        
+        // Recharger l'interface
+        renderTree();
+        
+        // Masquer les formulaires s'ils sont ouverts
+        hideForms();
+        
+        // Afficher un message de confirmation
+        alert("Extension réinitialisée avec succès ! Vous pouvez maintenant recommencer à organiser vos chats.");
+      });
+    }
+  }
+
   function loadData() {
     return new Promise((resolve) => {
       chrome.storage.local.get(["chatManagerData"], (result) => {
         if (!result.chatManagerData) {
           data = {
             id: "root",
-            name: "Mes Chats",
+            name: "🏠 Accueil",
             type: "folder",
             children: [],
             expanded: true,
@@ -414,6 +450,7 @@ document.addEventListener("DOMContentLoaded", () => {
         addFolderBtn.style.fontSize = "14px";
         addFolderBtn.addEventListener("click", (e) => {
           e.stopPropagation();
+          currentEditNode = null; // Reset pour création
           currentAddParentId = node.id;  // Important : on positionne le parent ici
           openEditFolderForm();
         });
@@ -426,6 +463,7 @@ document.addEventListener("DOMContentLoaded", () => {
         addChatBtn.style.fontSize = "14px";
         addChatBtn.addEventListener("click", (e) => {
           e.stopPropagation();
+          currentEditNode = null; // Reset pour création
           currentAddParentId = node.id; // Important : idem, on garde bien le dossier cible
           openEditChatForm();
         });
@@ -437,7 +475,9 @@ document.addEventListener("DOMContentLoaded", () => {
         editBtn.title = "Modifier le nom du dossier";
         editBtn.addEventListener("click", (e) => {
           e.stopPropagation();
+          addToDebugZone("Edit button clicked for folder:", node.name);
           currentEditNode = node;
+          addToDebugZone("currentEditNode set to:", currentEditNode);
           openEditFolderForm(node);
         });
         line.appendChild(editBtn);
@@ -540,12 +580,8 @@ document.addEventListener("DOMContentLoaded", () => {
     rootLi.addEventListener('dragleave', handleDragLeave);
     rootLi.addEventListener('drop', handleDrop);
     rootLi.addEventListener('dragend', handleDragEnd);
-    // Affichage du nom du dossier racine
-    const rootLine = document.createElement("div");
-    rootLine.className = "tree-node-line";
-    rootLine.innerHTML = `<span class="folder-name">${data.name}</span>`;
-    rootLi.appendChild(rootLine);
-    // Afficher l'arbre à partir du dossier racine
+    
+    // Afficher l'arbre à partir du dossier racine (sans doublon du titre)
     rootLi.appendChild(createNodeElement(data));
     ulRoot.appendChild(rootLi);
     treeContainer.appendChild(ulRoot);
@@ -554,17 +590,55 @@ document.addEventListener("DOMContentLoaded", () => {
   function hideForms() {
     addFolderForm.style.display = "none";
     addChatForm.style.display = "none";
-    currentEditNode = null;
+    // Ne pas reset currentEditNode ici car on en a besoin pour l'édition
+    // currentEditNode = null;
     // Ne pas reset currentAddParentId ici pour garder contexte si on veut ajouter plusieurs éléments dans même dossier
+  }
+
+  // Fonction pour ajouter un message à la zone de debug
+  function addToDebugZone(message, data = null) {
+    const debugZone = document.getElementById('debug-zone');
+    const debugContent = document.getElementById('debug-content');
+    
+    if (debugZone && debugContent) {
+      const timestamp = new Date().toLocaleTimeString();
+      const logEntry = document.createElement('div');
+      logEntry.style.marginBottom = '2px';
+      logEntry.style.borderBottom = '1px solid #ddd';
+      logEntry.style.paddingBottom = '2px';
+      
+      let content = `[${timestamp}] ${message}`;
+      if (data) {
+        content += `: ${JSON.stringify(data).substring(0, 100)}...`;
+      }
+      
+      logEntry.textContent = content;
+      debugContent.appendChild(logEntry);
+      
+      // Garder seulement les 10 derniers logs
+      while (debugContent.children.length > 10) {
+        debugContent.removeChild(debugContent.firstChild);
+      }
+      
+      // Scroll vers le bas
+      debugZone.scrollTop = debugZone.scrollHeight;
+    }
   }
 
   function openEditFolderForm(node) {
     hideForms();
     addFolderForm.style.display = "block";
+    
+    // Debug temporaire
+    addToDebugZone("openEditFolderForm called with node:", node);
+    addToDebugZone("currentEditNode:", currentEditNode);
+    
     if (node) {
       folderNameInput.value = node.name;
+      addToDebugZone("Setting folder name to:", node.name);
     } else {
       folderNameInput.value = "";
+      addToDebugZone("Clearing folder name");
     }
     folderNameInput.focus();
 
@@ -573,9 +647,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const name = folderNameInput.value.trim();
       if (!name) return alert("Le nom du dossier est obligatoire.");
 
+      addToDebugZone("Form submitted with name:", name);
+      addToDebugZone("currentEditNode:", currentEditNode);
+
       if (currentEditNode) {
+        addToDebugZone("Editing existing folder:", currentEditNode.name + " -> " + name);
         currentEditNode.name = name;
       } else {
+        addToDebugZone("Creating new folder in parent:", currentAddParentId);
         const parent = findById(data, currentAddParentId);
         if (!parent || parent.type !== "folder") {
           alert("Dossier parent introuvable.");
@@ -590,6 +669,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
       saveData();
+      currentEditNode = null; // Reset après édition/création
       hideForms();
       renderTree();
     };
