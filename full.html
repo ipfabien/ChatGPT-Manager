@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatGPT Manager - Version Plein Écran</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Styles spécifiques pour la version plein écran */
+    body {
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+      overflow: auto;
+    }
+    
+    #app {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+    }
+    
+    .header h1 {
+      font-size: 28px;
+    }
+    
+    .header p {
+      font-size: 16px;
+    }
+    
+    /* Zone d'information plus grande */
+    .info-banner {
+      background-color: #e3f2fd;
+      border: 1px solid #2196f3;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    
+    /* Container principal plus grand */
+    #tree-container {
+      max-height: calc(100vh - 200px);
+      overflow-y: auto;
+    }
+    
+    /* Boutons plus grands */
+    .btn-green, .edit-btn {
+      font-size: 16px;
+      padding: 8px 12px;
+    }
+    
+    /* Badges plus grands */
+    .chat-count-badge {
+      font-size: 12px;
+      padding: 4px 8px;
+    }
+    
+    .chat-count-badge.root-badge {
+      font-size: 13px;
+      padding: 5px 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="header">
+      <h1>ChatGPT Manager v1.1.1 - Version Plein Écran</h1>
+      <p>Organisez vos conversations ChatGPT en dossiers</p>
+    </div>
+    
+    <div class="info-banner">
+      <strong>Nouveau en v1.1.0 :</strong> Compteur de chats sur chaque dossier !<br>
+      <strong>Nouveau en v1.0.7 :</strong> Glissez-déposez les chats et dossiers avec l'icône ⋮⋮ pour les réorganiser !<br>
+      <small>💡 Conseil : Cliquez sur l'icône ⋮⋮ et maintenez pour commencer le glissement</small><br>
+      <div class="info-section">
+        <p>💡 <strong>Astuce</strong> : Utilisez le glisser-déposer pour organiser vos chats et dossiers !</p>
+        <button id="resetBtn" class="reset-btn" style="display: none;">Reset</button>
+        <button id="logsBtn" class="logs-btn" style="display: none;">Logs</button>
+      </div>
+    </div>
+    
+    <div id="tree-container"></div>
+    
+    <!-- Formulaires -->
+    <div id="folder-form" style="display: none;">
+      <form id="new-folder-form">
+        <label for="folder-name">Nom du dossier :</label>
+        <input type="text" id="folder-name" required>
+        <button type="submit" class="btn-green">Créer</button>
+        <button type="button" id="cancel-folder">Annuler</button>
+      </form>
+    </div>
+    
+    <div id="chat-form" style="display: none;">
+      <form id="new-chat-form">
+        <label for="chat-name">Nom du chat :</label>
+        <input type="text" id="chat-name" required>
+        <label for="chat-link">Lien du chat :</label>
+        <input type="url" id="chat-link" required>
+        <button type="submit" class="btn-green">Créer</button>
+        <button type="button" id="cancel-chat">Annuler</button>
+      </form>
+    </div>
+    
+    <!-- Zone de debug -->
+    <div id="debug-area" style="display: none; margin-top: 20px; padding: 10px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto;">
+      <strong>Zone de Debug :</strong>
+      <div id="debug-content"></div>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html> 

@@ -4,6 +4,10 @@ Une extension Chrome pour organiser et gérer vos conversations ChatGPT et autre
 
 ## Fonctionnalités
 
+### Version 1.1.1
+- **Fenêtre dédiée** : Ouverture dans une fenêtre de 800x600 pixels au lieu d'une popup limitée
+- **Version plein écran** : Nouveau fichier `full.html` pour une utilisation en mode plein écran
+
 ### Version 1.1.0
 - **Compteur de chats** : Affichage du nombre de chats contenus dans chaque dossier (y compris les sous-dossiers)
 - Badge bleu élégant avec effet hover pour une meilleure visibilité
