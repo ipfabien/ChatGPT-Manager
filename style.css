@@ -15,7 +15,17 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 2px 0;
+  padding: 4px 2px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.tree-node-line:hover {
+  background-color: #f5f5f5;
+}
+
+.draggable .tree-node-line:hover {
+  background-color: #f0f8ff;
 }
 
 .toggle-icon {
@@ -28,6 +38,30 @@ body {
   cursor: pointer;
   flex-grow: 1;
   user-select: none;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+}
+
+.folder-name {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.folder-name:hover {
+  background-color: #ecf0f1;
+  color: #34495e;
+}
+
+.chat-name {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+.chat-name:hover {
+  background-color: #e3f2fd;
+  color: #0056b3;
+  text-decoration: none;
 }
 
 button.edit-btn {
@@ -35,14 +69,16 @@ button.edit-btn {
   border: none;
   cursor: pointer;
   font-size: 14px;
-  padding: 2px 6px;
+  padding: 4px 6px;
   color: #444;
   border-radius: 4px;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
 }
 
 button.edit-btn:hover {
-  background-color: #eee;
+  background-color: #e3f2fd;
+  color: #1976d2;
+  transform: scale(1.1);
 }
 
 .btn-green {
@@ -97,4 +133,89 @@ button#cancel-folder, button#cancel-chat {
 
 button#cancel-folder:hover, button#cancel-chat:hover {
   background-color: #c82333;
+}
+
+/* Styles pour le drag and drop */
+.draggable {
+  cursor: grab;
+  transition: all 0.2s ease;
+}
+
+.draggable:active {
+  cursor: grabbing;
+}
+
+.dragging {
+  opacity: 0.5;
+  transform: rotate(5deg);
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+.drop-zone {
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  padding: 2px;
+}
+
+.drop-zone.drag-over {
+  background-color: #e3f2fd;
+  border: 2px dashed #2196f3;
+  transform: scale(1.02);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.drop-zone.drop-valid {
+  background-color: #e8f5e8;
+  border: 2px dashed #4caf50;
+  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+}
+
+.drop-zone.drop-invalid {
+  background-color: #ffebee;
+  border: 2px dashed #f44336;
+  box-shadow: 0 2px 4px rgba(244, 67, 54, 0.3);
+}
+
+.drag-handle {
+  cursor: grab;
+  padding: 2px 4px;
+  margin-right: 4px;
+  border-radius: 3px;
+  background-color: #f0f0f0;
+  font-size: 12px;
+  user-select: none;
+  color: #666;
+  transition: all 0.2s ease;
+  display: inline-block;
+  min-width: 16px;
+  text-align: center;
+}
+
+.drag-handle:hover {
+  background-color: #e0e0e0;
+  color: #333;
+  transform: scale(1.1);
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+  background-color: #d0d0d0;
+}
+
+/* Indicateur de drop */
+.drop-indicator {
+  height: 2px;
+  background-color: #2196f3;
+  margin: 2px 0;
+  border-radius: 1px;
+  transition: all 0.2s ease;
+}
+
+.drop-indicator.show {
+  height: 4px;
+  background-color: #4caf50;
 }
