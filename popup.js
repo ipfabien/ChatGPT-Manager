@@ -8,13 +8,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatNameInput = document.getElementById("chat-name");
   const chatLinkInput = document.getElementById("chat-link");
 
-  // Ajout du listener pour le bouton Reset
-  const btnReset = document.getElementById('btn-reset');
-  if (btnReset) btnReset.addEventListener('click', resetData);
+  // Écouteurs d'événements pour les boutons Reset et Logs
+  document.getElementById("resetBtn").addEventListener("click", function() {
+    if (confirm("Êtes-vous sûr de vouloir réinitialiser toutes les données ? Cette action est irréversible.")) {
+      chrome.storage.local.clear(function() {
+        console.log("Données réinitialisées");
+        location.reload();
+      });
+    }
+  });
 
-  // Ajout du listener pour le bouton Logs
-  const btnLogs = document.getElementById('btn-logs');
-  if (btnLogs) btnLogs.addEventListener('click', toggleDebugZone);
+  document.getElementById("logsBtn").addEventListener("click", function() {
+    const debugArea = document.getElementById("debug-area");
+    if (debugArea.style.display === "none" || debugArea.style.display === "") {
+      debugArea.style.display = "block";
+      this.textContent = "Masquer Logs";
+    } else {
+      debugArea.style.display = "none";
+      this.textContent = "Logs";
+    }
+  });
 
   let data = null;
   let currentEditNode = null;
@@ -92,6 +105,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function generateId() {
     return Math.random().toString(36).substr(2, 9);
+  }
+
+  function countChatsInFolder(folder) {
+    let count = 0;
+    if (!folder.children) return count;
+    
+    for (const child of folder.children) {
+      if (child.type === "chat") {
+        count++;
+      } else if (child.type === "folder") {
+        count += countChatsInFolder(child);
+      }
+    }
+    return count;
   }
 
   function deleteNodeById(parentNode, idToDelete) {
@@ -442,6 +469,23 @@ document.addEventListener("DOMContentLoaded", () => {
         folderNameSpan.className = "folder-name";
         folderNameSpan.style.marginLeft = "5px";
         line.appendChild(folderNameSpan);
+
+        // Ajouter le compteur de chats pour tous les dossiers
+        const chatCount = countChatsInFolder(node);
+        if (chatCount > 0) {
+          const countBadge = document.createElement("span");
+          countBadge.className = node.id === "root" ? "chat-count-badge root-badge" : "chat-count-badge";
+          countBadge.textContent = chatCount;
+          
+          // Infobulle différente selon le type de dossier
+          if (node.id === "root") {
+            countBadge.title = `📊 ${chatCount} chat${chatCount > 1 ? 's' : ''} au total dans tous vos dossiers et sous-dossiers`;
+          } else {
+            countBadge.title = `📁 ${chatCount} chat${chatCount > 1 ? 's' : ''} dans ce dossier et ses sous-dossiers`;
+          }
+          
+          line.appendChild(countBadge);
+        }
 
         const addFolderBtn = document.createElement("button");
         addFolderBtn.className = "btn-green btn-small";

@@ -120,12 +120,19 @@
 </head>
 <body>
   <div id="app">
-    <h1>ChatGPT Manager</h1>
+    <div class="header">
+      <h1>ChatGPT Manager v1.1.0</h1>
+      <p>Organisez vos conversations ChatGPT en dossiers</p>
+    </div>
     <div style="background-color: #e3f2fd; border: 1px solid #2196f3; border-radius: 4px; padding: 8px; margin-bottom: 10px; font-size: 12px;">
+      <strong>Nouveau en v1.1.0 :</strong> Compteur de chats sur chaque dossier !<br>
       <strong>Nouveau en v1.0.7 :</strong> Glissez-déposez les chats et dossiers avec l'icône ⋮⋮ pour les réorganiser !<br>
       <small>💡 Conseil : Cliquez sur l'icône ⋮⋮ et maintenez pour commencer le glissement</small><br>
-      <button id="btn-reset" style="margin-top: 5px; padding: 4px 8px; font-size: 11px; background: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer; display: none;">🔄 Reset</button>
-      <button id="btn-logs" style="margin-top: 5px; margin-left: 5px; padding: 4px 8px; font-size: 11px; background: #6c757d; color: white; border: none; border-radius: 3px; cursor: pointer; display: none;">📋 Logs</button>
+      <div class="info-section">
+        <p>💡 <strong>Astuce</strong> : Utilisez le glisser-déposer pour organiser vos chats et dossiers !</p>
+        <button id="resetBtn" class="reset-btn">Reset</button>
+        <button id="logsBtn" class="logs-btn">Logs</button>
+      </div>
     </div>
     <div id="tree-container"></div>
     

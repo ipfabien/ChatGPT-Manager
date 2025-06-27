@@ -4,8 +4,13 @@ Une extension Chrome pour organiser et gérer vos conversations ChatGPT et autre
 
 ## Fonctionnalités
 
+### Version 1.1.0
+- **Compteur de chats** : Affichage du nombre de chats contenus dans chaque dossier (y compris les sous-dossiers)
+- Badge bleu élégant avec effet hover pour une meilleure visibilité
+
 ### Version 1.0.7
-- Modifications d'affichage
+- **Dossier racine renommé** : Le dossier principal s'appelle maintenant "🏠 Accueil" pour une meilleure compréhension
+- **Bouton Reset** : Possibilité de réinitialiser complètement l'extension et toutes ses données
 
 ### Version 1.0.6
 - **Drag and Drop** : Glissez-déposez les chats et dossiers pour les réorganiser facilement
