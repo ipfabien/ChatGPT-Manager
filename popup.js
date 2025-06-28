@@ -137,8 +137,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // Configuration de la navigation clavier
   const KEYBOARD_CONFIG = {
     enableNavigation: true,
-    enableShortcuts: true,
-    focusIndicator: true
+    enableShortcuts: true
+  };
+
+  // Configuration pour les préférences utilisateur
+  const USER_PREFERENCES = {
+    theme: 'light',
+    fontSize: 'normal'
   };
 
   function saveData() {
@@ -870,6 +875,43 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initialiser la navigation clavier
     initializeKeyboardNavigation();
     initializeKeyboardShortcuts();
+    
+    // Charger les préférences utilisateur
+    loadUserPreferences();
+    
+    // Event listeners pour les boutons d'action
+    document.getElementById('toggle-theme').addEventListener('click', () => {
+      const newTheme = USER_PREFERENCES.theme === 'light' ? 'dark' : 'light';
+      applyTheme(newTheme);
+      saveUserPreferences();
+      addLog(`Thème basculé vers: ${newTheme}`);
+    });
+    
+    document.getElementById('toggle-font-size').addEventListener('click', () => {
+      const newSize = USER_PREFERENCES.fontSize === 'normal' ? 'large' : 'normal';
+      applyFontSize(newSize);
+      saveUserPreferences();
+      addLog(`Taille de police basculée vers: ${newSize}`);
+    });
+    
+    document.getElementById('fullscreen-btn').addEventListener('click', () => {
+      window.open('full.html', '_blank', 'width=800,height=600');
+      addLog('Ouverture en mode plein écran');
+    });
+    
+    // Event listeners pour les boutons de debug
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      if (confirm('Êtes-vous sûr de vouloir réinitialiser toutes les données ?')) {
+        chrome.storage.local.clear(() => {
+          location.reload();
+        });
+      }
+    });
+    
+    document.getElementById('logsBtn').addEventListener('click', () => {
+      const logsContainer = document.getElementById('logs-container');
+      logsContainer.style.display = logsContainer.style.display === 'none' ? 'block' : 'none';
+    });
   });
 
   function addLog(message) {
@@ -1714,5 +1756,59 @@ document.addEventListener("DOMContentLoaded", () => {
       deleteNode(selectedNodeId);
       addLog('Suppression via raccourci Delete');
     }
+  }
+
+  // Charger les préférences utilisateur
+  async function loadUserPreferences() {
+    try {
+      const result = await chrome.storage.sync.get(['theme', 'fontSize']);
+      USER_PREFERENCES.theme = result.theme || 'light';
+      USER_PREFERENCES.fontSize = result.fontSize || 'normal';
+      
+      // Appliquer les préférences
+      applyTheme(USER_PREFERENCES.theme);
+      applyFontSize(USER_PREFERENCES.fontSize);
+      
+      addLog('Préférences utilisateur chargées');
+    } catch (error) {
+      console.error('Erreur lors du chargement des préférences:', error);
+    }
+  }
+
+  // Sauvegarder les préférences utilisateur
+  async function saveUserPreferences() {
+    try {
+      await chrome.storage.sync.set({
+        theme: USER_PREFERENCES.theme,
+        fontSize: USER_PREFERENCES.fontSize
+      });
+      addLog('Préférences utilisateur sauvegardées');
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde des préférences:', error);
+    }
+  }
+
+  // Appliquer le thème
+  function applyTheme(theme) {
+    const body = document.body;
+    if (theme === 'dark') {
+      body.classList.add('dark-mode');
+      body.classList.remove('light-mode');
+    } else {
+      body.classList.add('light-mode');
+      body.classList.remove('dark-mode');
+    }
+    USER_PREFERENCES.theme = theme;
+  }
+
+  // Appliquer la taille de police
+  function applyFontSize(size) {
+    const body = document.body;
+    if (size === 'large') {
+      body.classList.add('large-font');
+    } else {
+      body.classList.remove('large-font');
+    }
+    USER_PREFERENCES.fontSize = size;
   }
 });

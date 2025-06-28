@@ -4,6 +4,12 @@ Une extension Chrome pour organiser et gérer vos conversations ChatGPT et autre
 
 ## Fonctionnalités
 
+### Version 1.2.7
+- **Option de taille de police** : Basculement entre taille normale et grande pour améliorer l'accessibilité
+- **Préférences utilisateur** : Sauvegarde automatique des préférences de thème et taille de police
+- **Interface adaptative** : Tous les éléments s'adaptent à la taille de police choisie
+- **Mode sombre compatible** : Grande police compatible avec le thème sombre
+
 ### Version 1.2.6
 - **Navigation clavier complète** : Navigation dans l'arbre avec les touches flèches
 - **Navigation Tab** : Navigation entre les éléments interactifs avec Tab/Shift+Tab
@@ -13,21 +19,10 @@ Une extension Chrome pour organiser et gérer vos conversations ChatGPT et autre
 - **Amélioration de l'accessibilité** : Support complet de la navigation au clavier et des technologies d'assistance
 - **Contrastes améliorés** : Meilleurs ratios de contraste pour l'accessibilité
 - **Mode sombre compatible** : Tous les indicateurs de focus adaptés au thème sombre
-
-## Raccourcis Clavier
-
-- **Flèches** : Navigation dans l'arbre
-  - ↑/↓ : Naviguer entre les éléments
-  - → : Développer un dossier ou naviguer vers le premier enfant
-  - ← : Réduire un dossier ou naviguer vers le parent
-- **Tab/Shift+Tab** : Navigation native entre tous les éléments interactifs (boutons, inputs, liens)
-- **Entrée** : Ouvrir le chat sélectionné ou développer/réduire le dossier
-- **Échap** : Effacer la sélection
-- **Ctrl+N** : Nouveau chat
-- **Ctrl+Shift+N** : Nouveau dossier
-- **Ctrl+F** : Focus sur la recherche
-- **Ctrl+E** : Modifier l'élément sélectionné
-- **Suppr** : Supprimer l'élément sélectionné
+- **Support des lecteurs d'écran** : ARIA labels complets pour tous les éléments interactifs
+- **Amélioration de l'accessibilité** : Support complet de la navigation au clavier et des technologies d'assistance
+- **Contrastes améliorés** : Meilleurs ratios de contraste pour l'accessibilité
+- **Mode sombre compatible** : Tous les indicateurs de focus adaptés au thème sombre
 
 ### Version 1.2.5
 - **Barre de recherche intelligente** : Recherche en temps réel dans les noms de chats et les tags
@@ -96,6 +91,21 @@ Une extension Chrome pour organiser et gérer vos conversations ChatGPT et autre
 - Le dossier racine ne peut pas être déplacé
 - Indicateurs visuels pour les zones de drop valides/invalides
 - Tri automatique : dossiers d'abord, puis chats, le tout par ordre alphabétique
+
+## Raccourcis Clavier
+
+- **Flèches** : Navigation dans l'arbre
+  - ↑/↓ : Naviguer entre les éléments
+  - → : Développer un dossier ou naviguer vers le premier enfant
+  - ← : Réduire un dossier ou naviguer vers le parent
+- **Tab/Shift+Tab** : Navigation native entre tous les éléments interactifs (boutons, inputs, liens)
+- **Entrée** : Ouvrir le chat sélectionné ou développer/réduire le dossier
+- **Échap** : Effacer la sélection
+- **Ctrl+N** : Nouveau chat
+- **Ctrl+Shift+N** : Nouveau dossier
+- **Ctrl+F** : Focus sur la recherche
+- **Ctrl+E** : Modifier l'élément sélectionné
+- **Suppr** : Supprimer l'élément sélectionné
 
 ### Fonctionnalités générales
 - Création de dossiers pour organiser vos chats
@@ -174,14 +184,8 @@ Un mode debug est intégré à l'extension :
 
 ### 🎯 Priorité haute - Accessibilité
 
-#### Amélioration de l'accessibilité
-- **Taille de police** : Option pour augmenter la taille du texte
-
-### 🎨 Priorité moyenne - Expérience utilisateur
-
 #### Indicateurs visuels
 - **Statut des chats** : Indicateur lu/non lu (point rouge)
-- **Dossiers vides** : Style différent pour les dossiers sans contenu
 - **Éléments récents** : Surbrillance des éléments ajoutés récemment
 - **Progression** : Indicateur de chargement pour les actions longues
 
@@ -193,7 +197,6 @@ Un mode debug est intégré à l'extension :
 
 #### Fonctionnalités avancées
 - **Undo/Redo** : Annuler/rétablir les actions importantes
-- **Recherche avancée** : Filtres par date, tag, dossier
 - **Tri personnalisé** : Options de tri (nom, date, taille)
 
 ### 🚀 Priorité basse - Fonctionnalités avancées
@@ -233,8 +236,6 @@ Un mode debug est intégré à l'extension :
 ### 🎯 Feuille de route suggérée
 
 #### Version 1.3.0 (Court terme)
-- Menu contextuel
-- Indicateurs visuels
 - Système Undo/Redo
 
 #### Version 2.0.0 (Long terme)
@@ -253,6 +254,7 @@ Ces recommandations visent à transformer une excellente extension en une soluti
 
 ## Versions
 
+- **1.2.7** : Option de taille de police, préférences utilisateur, interface adaptative, mode sombre compatible
 - **1.2.6** : Navigation clavier complète, raccourcis clavier, focus styles, support des lecteurs d'écran, amélioration de l'accessibilité, contrastes améliorés, mode sombre compatible
 - **1.2.5** : Barre de recherche intelligente, recherche optimisée, debounce intelligent, affichage des résultats, recherche à partir de 2 caractères, mode sombre compatible, actions intégrées
 - **1.2.4** : Tags pour les chats, affichage des tags, champ non obligatoire, style adaptatif, design cohérent

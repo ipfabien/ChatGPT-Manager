@@ -951,3 +951,107 @@ body.dark-mode input:focus,
 body.dark-mode .material-icons:focus {
   outline: 2px solid #90caf9;
 }
+
+body.dark-mode button:focus,
+body.dark-mode input:focus,
+body.dark-mode .material-icons:focus {
+  outline: 2px solid #90caf9;
+}
+
+/* Classes pour les tailles de police */
+body.large-font {
+  font-size: 16px;
+}
+
+body.large-font .header h1 {
+  font-size: 24px;
+}
+
+body.large-font .tree-node-line {
+  font-size: 16px;
+  padding: 8px 12px;
+}
+
+body.large-font .folder-name,
+body.large-font .chat-link {
+  font-size: 16px;
+}
+
+body.large-font .folder-counter {
+  font-size: 14px;
+  padding: 4px 8px;
+}
+
+body.large-font .chat-tag {
+  font-size: 13px;
+  padding: 3px 10px;
+}
+
+body.large-font .edit-btns .material-icons {
+  font-size: 20px;
+}
+
+body.large-font .toggle-icon {
+  font-size: 20px !important;
+}
+
+body.large-font .search-bar input {
+  font-size: 16px;
+  padding: 8px 12px;
+}
+
+body.large-font .search-bar button .material-icons {
+  font-size: 20px;
+}
+
+body.large-font .inline-form input {
+  font-size: 16px;
+  padding: 8px;
+}
+
+body.large-font .inline-form button .material-icons {
+  font-size: 22px;
+}
+
+body.large-font .search-result-item {
+  padding: 12px;
+}
+
+body.large-font .result-path {
+  font-size: 14px;
+}
+
+body.large-font .result-content {
+  font-size: 16px;
+}
+
+body.large-font .result-actions .material-icons {
+  font-size: 20px;
+}
+
+body.large-font .search-edit-form input {
+  font-size: 16px;
+  padding: 8px;
+}
+
+body.large-font .search-edit-form button .material-icons {
+  font-size: 22px;
+}
+
+/* Mode sombre pour les grandes polices */
+body.dark-mode.large-font .tree-node-line {
+  font-size: 16px;
+}
+
+body.dark-mode.large-font .folder-name,
+body.dark-mode.large-font .chat-link {
+  font-size: 16px;
+}
+
+body.dark-mode.large-font .search-bar input {
+  font-size: 16px;
+}
+
+body.dark-mode.large-font .search-bar input {
+  font-size: 16px;
+}
