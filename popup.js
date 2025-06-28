@@ -543,6 +543,7 @@ document.addEventListener("DOMContentLoaded", () => {
             html += `
                 <span class="material-icons">chat</span>
                 <a href="${node.link}" class="chat-link" target="_blank">${node.name}</a>
+                ${node.tag ? `<span class="chat-tag">${node.tag}</span>` : ''}
                 <div class="edit-btns">
                     <span class="material-icons" data-action="editNode" data-id="${node.id}" title="Modifier">edit</span>
                     <span class="material-icons" data-action="deleteNode" data-id="${node.id}" title="Supprimer">delete</span>
@@ -627,7 +628,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <form>
         <input type="text" placeholder="Nom du dossier" value="${node ? node.name : ''}" required />
         <button type="submit"><span class="material-icons">check</span></button>
-        <button type="button" onclick="hideForms()"><span class="material-icons">close</span></button>
+        <button type="button" class="close-btn"><span class="material-icons">close</span></button>
       </form>
     `;
     
@@ -650,6 +651,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
     
+    // Ajouter l'event listener pour le bouton de fermeture
+    const closeBtn = formContainer.querySelector('.close-btn');
+    closeBtn.addEventListener('click', () => {
+      currentEditNode = null;
+      hideForms();
+      renderTree();
+    });
+    
     // Focus sur le champ de saisie
     const nameInput = formContainer.querySelector('input');
     nameInput.focus();
@@ -668,6 +677,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!parent || parent.type !== "folder") {
           alert("Dossier parent introuvable.");
           return;
+        }
+        // Ouvrir le dossier parent s'il est fermé
+        if (parent.expanded === false) {
+          parent.expanded = true;
+          addLog(`Ouverture automatique du dossier: ${parent.name}`);
         }
         parent.children.push({
           id: generateId(),
@@ -696,8 +710,9 @@ document.addEventListener("DOMContentLoaded", () => {
       <form>
         <input type="text" placeholder="Nom du chat" value="${node ? node.name : ''}" required />
         <input type="url" placeholder="Lien vers le chat" value="${node ? node.link : ''}" required />
+        <input type="text" placeholder="Tag (optionnel)" value="${node && node.tag ? node.tag : ''}" />
         <button type="submit"><span class="material-icons">check</span></button>
-        <button type="button" onclick="hideForms()"><span class="material-icons">close</span></button>
+        <button type="button" class="close-btn"><span class="material-icons">close</span></button>
       </form>
     `;
     
@@ -720,6 +735,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
     
+    // Ajouter l'event listener pour le bouton de fermeture
+    const closeBtn = formContainer.querySelector('.close-btn');
+    closeBtn.addEventListener('click', () => {
+      currentEditNode = null;
+      hideForms();
+      renderTree();
+    });
+    
     // Focus sur le premier champ
     const nameInput = formContainer.querySelector('input[type="text"]');
     nameInput.focus();
@@ -730,21 +753,29 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       const name = nameInput.value.trim();
       const link = formContainer.querySelector('input[type="url"]').value.trim();
+      const tag = formContainer.querySelector('input[type="text"]:last-of-type').value.trim();
       if (!name || !link) return alert("Le nom et le lien du chat sont obligatoires.");
 
       if (currentEditNode) {
         currentEditNode.name = name;
         currentEditNode.link = link;
+        currentEditNode.tag = tag || null; // Stocker null si le tag est vide
       } else {
         const parent = findById(data, currentAddParentId);
         if (!parent || parent.type !== "folder") {
           alert("Dossier parent introuvable.");
           return;
         }
+        // Ouvrir le dossier parent s'il est fermé
+        if (parent.expanded === false) {
+          parent.expanded = true;
+          addLog(`Ouverture automatique du dossier: ${parent.name}`);
+        }
         parent.children.push({
           id: generateId(),
           name,
           link,
+          tag: tag || null, // Stocker null si le tag est vide
           type: "chat",
         });
       }
@@ -793,6 +824,12 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log('Fonction editNode appelée avec nodeId:', nodeId);
     const node = findById(data, nodeId);
     if (!node) return;
+    
+    // Trouver le parent de l'élément à éditer
+    const parent = findParentNode(data, nodeId);
+    if (parent) {
+      currentAddParentId = parent.id;
+    }
     
     currentEditNode = node;
     if (node.type === 'folder') {

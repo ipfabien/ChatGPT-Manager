@@ -4,6 +4,13 @@ Une extension Chrome pour organiser et gérer vos conversations ChatGPT et autre
 
 ## Fonctionnalités
 
+### Version 1.2.4
+- **Tags pour les chats** : Ajout d'un champ tag optionnel lors de la création et modification de chats
+- **Affichage des tags** : Les tags sont affichés à côté du nom du chat avec un style élégant
+- **Champ non obligatoire** : Le tag est optionnel et n'est affiché que s'il a été renseigné
+- **Style adaptatif** : Les tags s'adaptent au mode sombre/clair avec des couleurs cohérentes
+- **Design cohérent** : Intégration harmonieuse dans l'interface existante
+
 ### Version 1.2.3
 - **Boutons tout ouvrir/fermer** : Implémentation des fonctionnalités pour développer ou réduire tous les dossiers en une seule action
 - **Navigation rapide** : Possibilité d'ouvrir ou fermer l'ensemble de l'arborescence instantanément
@@ -131,6 +138,7 @@ Un mode debug est intégré à l'extension :
 
 ## Versions
 
+- **1.2.4** : Tags pour les chats, affichage des tags, champ non obligatoire, style adaptatif, design cohérent
 - **1.2.3** : Boutons tout ouvrir/fermer, navigation rapide, sauvegarde automatique, logs d'activité
 - **1.2.2** : Formulaires inline dans l'arbre - design compact et cohérent, meilleure expérience utilisateur
 - **1.2.1** : Améliorations graphiques - icônes d'ajout plus explicites, icônes de drop cohérentes dans la charte graphique bleue

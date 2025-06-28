@@ -172,6 +172,24 @@ ul {
   margin-left: 4px;
 }
 
+/* Chat tags */
+.chat-tag {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  margin-left: 8px;
+  border: 1px solid #bbdefb;
+}
+
+body.dark-mode .chat-tag {
+  background-color: #1e3a5f;
+  color: #90caf9;
+  border-color: #2c5aa0;
+}
+
 /* Edit buttons */
 .edit-btns {
   margin-left: auto;
