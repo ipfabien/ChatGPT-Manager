@@ -8,13 +8,13 @@
 </head>
 <body class="light-mode">
   <div class="header">
-    <h1>ChatGPT Manager v1.2.1</h1>
+    <h1>ChatGPT Manager v1.2.6</h1>
     <div class="header-actions">
-      <button id="toggle-theme" title="Basculer le thème">
-        <span class="material-icons">light_mode</span>
+      <button id="toggle-theme" title="Basculer le thème" aria-label="Basculer entre le mode clair et sombre">
+        <span class="material-icons" aria-hidden="true">light_mode</span>
       </button>
-      <button id="fullscreen-btn" title="Plein écran">
-        <span class="material-icons">fullscreen</span>
+      <button id="fullscreen-btn" title="Plein écran" aria-label="Ouvrir en mode plein écran">
+        <span class="material-icons" aria-hidden="true">fullscreen</span>
       </button>
     </div>
   </div>
@@ -23,30 +23,34 @@
     <div style="display: flex; justify-content: space-between; align-items: center;">
       <span>📌 Cette extension est en cours de développement</span>
       <div style="display: flex; gap: 8px;">
-        <button id="resetBtn" class="debug-btn">🔄 Reset</button>
-        <button id="logsBtn" class="debug-btn">📋 Logs</button>
+        <button id="resetBtn" class="debug-btn" aria-label="Réinitialiser toutes les données de l'extension">🔄 Reset</button>
+        <button id="logsBtn" class="debug-btn" aria-label="Afficher les logs de l'extension">📋 Logs</button>
       </div>
     </div>
   </div>
 
   <div class="search-bar">
-    <input type="text" placeholder="Rechercher un chat ou un dossier..." />
-    <button title="Tout ouvrir"><span class="material-icons">unfold_more</span></button>
-    <button title="Tout fermer"><span class="material-icons">unfold_less</span></button>
+    <input type="text" placeholder="Rechercher un chat ou un dossier..." aria-label="Rechercher dans les chats et dossiers" />
+    <button title="Tout ouvrir" aria-label="Développer tous les dossiers">
+      <span class="material-icons" aria-hidden="true">unfold_more</span>
+    </button>
+    <button title="Tout fermer" aria-label="Réduire tous les dossiers">
+      <span class="material-icons" aria-hidden="true">unfold_less</span>
+    </button>
   </div>
 
-  <div id="tree-container">
+  <div id="tree-container" role="tree" aria-label="Arborescence des chats et dossiers">
     <!-- Le contenu sera généré dynamiquement par JavaScript -->
   </div>
 
   <!-- Zone de debug -->
-  <div id="debug-area" style="display: none; margin-top: 20px; padding: 10px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto;">
+  <div id="debug-area" style="display: none; margin-top: 20px; padding: 10px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto;" aria-label="Zone de debug">
     <strong>Zone de Debug :</strong>
     <div id="debug-content"></div>
   </div>
   
   <!-- Zone de logs -->
-  <div id="logs-container" class="logs-container">
+  <div id="logs-container" class="logs-container" aria-label="Logs de l'extension">
     <strong>Logs de Drag & Drop :</strong>
     <div id="logs-content"></div>
   </div>

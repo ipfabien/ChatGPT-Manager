@@ -852,3 +852,102 @@ body.dark-mode .search-edit-form button {
 body.dark-mode .search-edit-form button:hover {
   color: #fff;
 }
+
+body.dark-mode .search-edit-form .cancel-btn:hover {
+  background: #3e2723;
+}
+
+/* Styles pour la navigation clavier */
+#tree-container {
+  outline: none; /* Supprimer l'outline par défaut */
+}
+
+#tree-container:focus {
+  outline: 2px solid #e3f2fd;
+  outline-offset: 2px;
+}
+
+.keyboard-selected {
+  border: 2px solid #e3f2fd !important;
+  box-shadow: 0 0 0 2px rgba(227, 242, 253, 0.3) !important;
+}
+
+.keyboard-selected:hover {
+  border: 2px solid #e3f2fd !important;
+}
+
+/* Focus styles pour les éléments interactifs */
+.tree-node-line:focus-within {
+  outline: 2px solid #e3f2fd;
+  outline-offset: 2px;
+}
+
+.edit-btns .material-icons:focus {
+  outline: 2px solid #e3f2fd;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.search-bar input:focus {
+  outline: 2px solid #e3f2fd;
+  outline-offset: 2px;
+  border-color: #e3f2fd;
+}
+
+/* Mode sombre pour la navigation clavier */
+body.dark-mode .keyboard-selected {
+  border: 2px solid #1e3a5f !important;
+  box-shadow: 0 0 0 2px rgba(30, 58, 95, 0.3) !important;
+}
+
+body.dark-mode .keyboard-selected:hover {
+  border: 2px solid #1e3a5f !important;
+}
+
+body.dark-mode #tree-container:focus {
+  outline: 2px solid #90caf9;
+}
+
+body.dark-mode .tree-node-line:focus-within {
+  outline: 2px solid #90caf9;
+}
+
+body.dark-mode .edit-btns .material-icons:focus {
+  outline: 2px solid #90caf9;
+}
+
+body.dark-mode .search-bar input:focus {
+  outline: 2px solid #90caf9;
+  border-color: #90caf9;
+}
+
+/* Amélioration des contrastes pour l'accessibilité */
+.chat-link {
+  color: #0056b3; /* Plus contrasté que #0073e6 */
+}
+
+.chat-link:hover {
+  color: #003d82;
+}
+
+body.dark-mode .chat-link {
+  color: #90caf9; /* Plus contrasté */
+}
+
+body.dark-mode .chat-link:hover {
+  color: #64b5f6;
+}
+
+/* Indicateur de focus pour les boutons */
+button:focus,
+input:focus,
+.material-icons:focus {
+  outline: 2px solid #e3f2fd;
+  outline-offset: 2px;
+}
+
+body.dark-mode button:focus,
+body.dark-mode input:focus,
+body.dark-mode .material-icons:focus {
+  outline: 2px solid #90caf9;
+}

@@ -121,12 +121,24 @@ document.addEventListener("DOMContentLoaded", () => {
   let isSearchMode = false;
   let currentSearchQuery = '';
 
+  // Variables pour la navigation clavier
+  let selectedNodeId = null;
+  let keyboardNavigationEnabled = true;
+  let focusableElements = [];
+
   // Configuration de la recherche
   const SEARCH_CONFIG = {
     minLength: 2,
     debounceDelay: 400,
     useIndex: true,
     rebuildIndexOnChange: true
+  };
+
+  // Configuration de la navigation clavier
+  const KEYBOARD_CONFIG = {
+    enableNavigation: true,
+    enableShortcuts: true,
+    focusIndicator: true
   };
 
   function saveData() {
@@ -547,10 +559,15 @@ document.addEventListener("DOMContentLoaded", () => {
         nodeElement.className = 'tree-node-line';
         nodeElement.dataset.id = node.id;
         nodeElement.style.marginLeft = `${level * 16}px`;
+        nodeElement.setAttribute('tabindex', '0');
         
         // Ajouter la classe 'folder' pour les dossiers
         if (node.type === 'folder') {
             nodeElement.classList.add('folder');
+            nodeElement.setAttribute('role', 'treeitem');
+            nodeElement.setAttribute('aria-expanded', (node.expanded !== false).toString());
+        } else {
+            nodeElement.setAttribute('role', 'treeitem');
         }
         
         // Test visuel - ajouter une bordure de base pour vérifier que les styles s'appliquent
@@ -568,28 +585,28 @@ document.addEventListener("DOMContentLoaded", () => {
             
             // Ne pas afficher le bouton de suppression pour le dossier root
             const deleteButton = node.id === 'root' ? '' : 
-                `<span class="material-icons" data-action="deleteNode" data-id="${node.id}" title="Supprimer">delete</span>`;
+                `<span class="material-icons" data-action="deleteNode" data-id="${node.id}" title="Supprimer" aria-label="Supprimer le dossier '${node.name}'">delete</span>`;
             
             html += `
-                <span class="material-icons toggle-icon" data-action="toggle" data-id="${node.id}" style="${hasChildren ? '' : 'opacity: 0.3;'}">${toggleIcon}</span>
-                <span class="material-icons">${node.id === 'root' ? 'home' : 'folder'}</span>
+                <span class="material-icons toggle-icon" data-action="toggle" data-id="${node.id}" style="${hasChildren ? '' : 'opacity: 0.3;'}" aria-label="${isExpanded ? 'Réduire' : 'Développer'} le dossier '${node.name}'" aria-hidden="true">${toggleIcon}</span>
+                <span class="material-icons" aria-hidden="true">${node.id === 'root' ? 'home' : 'folder'}</span>
                 <span class="folder-name">${node.name}</span>
-                <span class="folder-counter">${countChatsInFolder(node)}</span>
+                <span class="folder-counter" aria-label="${countChatsInFolder(node)} chats dans ce dossier">${countChatsInFolder(node)}</span>
                 <div class="edit-btns">
-                    <span class="material-icons" data-action="addChat" data-id="${node.id}" title="Ajouter un chat">chat_bubble_outline</span>
-                    <span class="material-icons" data-action="addFolder" data-id="${node.id}" title="Ajouter un dossier">folder_open</span>
-                    <span class="material-icons" data-action="editNode" data-id="${node.id}" title="Modifier">edit</span>
+                    <span class="material-icons" data-action="addChat" data-id="${node.id}" title="Ajouter un chat" aria-label="Ajouter un nouveau chat dans le dossier '${node.name}'">chat_bubble_outline</span>
+                    <span class="material-icons" data-action="addFolder" data-id="${node.id}" title="Ajouter un dossier" aria-label="Ajouter un nouveau dossier dans '${node.name}'">folder_open</span>
+                    <span class="material-icons" data-action="editNode" data-id="${node.id}" title="Modifier" aria-label="Modifier le nom du dossier '${node.name}'">edit</span>
                     ${deleteButton}
                 </div>
             `;
         } else {
             html += `
-                <span class="material-icons">chat</span>
-                <a href="${node.link}" class="chat-link" target="_blank">${node.name}</a>
-                ${node.tag ? `<span class="chat-tag">${node.tag}</span>` : ''}
+                <span class="material-icons" aria-hidden="true">chat</span>
+                <a href="${node.link}" class="chat-link" target="_blank" aria-label="Ouvrir le chat '${node.name}'">${node.name}</a>
+                ${node.tag ? `<span class="chat-tag" aria-label="Tag: ${node.tag}">${node.tag}</span>` : ''}
                 <div class="edit-btns">
-                    <span class="material-icons" data-action="editNode" data-id="${node.id}" title="Modifier">edit</span>
-                    <span class="material-icons" data-action="deleteNode" data-id="${node.id}" title="Supprimer">delete</span>
+                    <span class="material-icons" data-action="editNode" data-id="${node.id}" title="Modifier" aria-label="Modifier le chat '${node.name}'">edit</span>
+                    <span class="material-icons" data-action="deleteNode" data-id="${node.id}" title="Supprimer" aria-label="Supprimer le chat '${node.name}'">delete</span>
                 </div>
             `;
         }
@@ -628,11 +645,23 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
         
+        // Ajouter event listener pour le focus avec Tab
+        nodeElement.addEventListener('focus', () => {
+            selectNode(node.id);
+        });
+        
+        // Ajouter event listener pour la perte de focus
+        nodeElement.addEventListener('blur', () => {
+            // Ne pas effacer la sélection immédiatement pour éviter les clignotements
+            // La sélection sera effacée quand un autre élément aura le focus
+        });
+        
         li.appendChild(nodeElement);
         
         // Créer la liste des enfants si c'est un dossier
         if (node.type === 'folder' && hasChildren && isExpanded) {
             const ul = document.createElement('ul');
+            ul.setAttribute('role', 'group');
             // Trier les enfants avant de les afficher
             const sortedChildren = sortChildren(node.children);
             sortedChildren.forEach(child => {
@@ -666,12 +695,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const formContainer = document.createElement('div');
     formContainer.className = 'inline-form';
     formContainer.id = 'inline-folder-form';
+    formContainer.setAttribute('role', 'form');
+    formContainer.setAttribute('aria-label', node ? `Modifier le dossier '${node.name}'` : 'Créer un nouveau dossier');
     
     const formHtml = `
       <form>
-        <input type="text" placeholder="Nom du dossier" value="${node ? node.name : ''}" required />
-        <button type="submit"><span class="material-icons">check</span></button>
-        <button type="button" class="close-btn"><span class="material-icons">close</span></button>
+        <input type="text" placeholder="Nom du dossier" value="${node ? node.name : ''}" required aria-label="Nom du dossier" />
+        <button type="submit" aria-label="Valider"><span class="material-icons" aria-hidden="true">check</span></button>
+        <button type="button" class="close-btn" aria-label="Annuler"><span class="material-icons" aria-hidden="true">close</span></button>
       </form>
     `;
     
@@ -748,14 +779,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const formContainer = document.createElement('div');
     formContainer.className = 'inline-form';
     formContainer.id = 'inline-chat-form';
+    formContainer.setAttribute('role', 'form');
+    formContainer.setAttribute('aria-label', node ? `Modifier le chat '${node.name}'` : 'Créer un nouveau chat');
     
     const formHtml = `
       <form>
-        <input type="text" placeholder="Nom du chat" value="${node ? node.name : ''}" required />
-        <input type="url" placeholder="Lien vers le chat" value="${node ? node.link : ''}" required />
-        <input type="text" placeholder="Tag (optionnel)" value="${node && node.tag ? node.tag : ''}" />
-        <button type="submit"><span class="material-icons">check</span></button>
-        <button type="button" class="close-btn"><span class="material-icons">close</span></button>
+        <input type="text" placeholder="Nom du chat" value="${node ? node.name : ''}" required aria-label="Nom du chat" />
+        <input type="url" placeholder="Lien vers le chat" value="${node ? node.link : ''}" required aria-label="Lien vers le chat" />
+        <input type="text" placeholder="Tag (optionnel)" value="${node && node.tag ? node.tag : ''}" aria-label="Tag optionnel" />
+        <button type="submit" aria-label="Valider"><span class="material-icons" aria-hidden="true">check</span></button>
+        <button type="button" class="close-btn" aria-label="Annuler"><span class="material-icons" aria-hidden="true">close</span></button>
       </form>
     `;
     
@@ -833,6 +866,10 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Ajouter les event listeners de drag & drop au niveau du conteneur
     attachDragListeners();
+    
+    // Initialiser la navigation clavier
+    initializeKeyboardNavigation();
+    initializeKeyboardShortcuts();
   });
 
   function addLog(message) {
@@ -1137,25 +1174,26 @@ document.addEventListener("DOMContentLoaded", () => {
   function createSearchResultItem(chat) {
     const item = document.createElement('div');
     item.className = 'search-result-item';
+    item.setAttribute('role', 'listitem');
     
     // Construire le chemin
     const path = chat.path.join(' > ');
     
     item.innerHTML = `
-      <div class="result-path">${path}</div>
+      <div class="result-path" aria-label="Chemin: ${path}">${path}</div>
       <div class="result-main">
         <div class="result-content">
-          <span class="material-icons">chat</span>
-          <a href="${chat.link}" class="chat-link" target="_blank">${chat.name}</a>
-          ${chat.tag ? `<span class="chat-tag">${chat.tag}</span>` : ''}
+          <span class="material-icons" aria-hidden="true">chat</span>
+          <a href="${chat.link}" class="chat-link" target="_blank" aria-label="Ouvrir le chat '${chat.name}'">${chat.name}</a>
+          ${chat.tag ? `<span class="chat-tag" aria-label="Tag: ${chat.tag}">${chat.tag}</span>` : ''}
         </div>
         <div class="result-actions">
-          <span class="material-icons view-btn" data-id="${chat.id}" title="Voir dans l'arbre">visibility</span>
-          <span class="material-icons edit-btn" data-id="${chat.id}" title="Modifier">edit</span>
-          <span class="material-icons delete-btn" data-id="${chat.id}" title="Supprimer">delete</span>
+          <span class="material-icons view-btn" data-id="${chat.id}" title="Voir dans l'arbre" aria-label="Voir '${chat.name}' dans l'arbre">visibility</span>
+          <span class="material-icons edit-btn" data-id="${chat.id}" title="Modifier" aria-label="Modifier le chat '${chat.name}'">edit</span>
+          <span class="material-icons delete-btn" data-id="${chat.id}" title="Supprimer" aria-label="Supprimer le chat '${chat.name}'">delete</span>
         </div>
       </div>
-      <div class="result-edit-form" style="display: none;"></div>
+      <div class="result-edit-form" style="display: none;" role="form" aria-label="Modifier le chat '${chat.name}'"></div>
     `;
     
     // Ajouter les event listeners pour les actions
@@ -1280,11 +1318,11 @@ document.addEventListener("DOMContentLoaded", () => {
     
     const formHtml = `
       <form class="search-edit-form">
-        <input type="text" placeholder="Nom du chat" value="${chat.name}" required />
-        <input type="url" placeholder="Lien vers le chat" value="${chat.link}" required />
-        <input type="text" placeholder="Tag (optionnel)" value="${chat.tag || ''}" />
-        <button type="submit"><span class="material-icons">check</span></button>
-        <button type="button" class="cancel-btn"><span class="material-icons">close</span></button>
+        <input type="text" placeholder="Nom du chat" value="${chat.name}" required aria-label="Nom du chat" />
+        <input type="url" placeholder="Lien vers le chat" value="${chat.link}" required aria-label="Lien vers le chat" />
+        <input type="text" placeholder="Tag (optionnel)" value="${chat.tag || ''}" aria-label="Tag optionnel" />
+        <button type="submit" aria-label="Valider"><span class="material-icons" aria-hidden="true">check</span></button>
+        <button type="button" class="cancel-btn" aria-label="Annuler"><span class="material-icons" aria-hidden="true">close</span></button>
       </form>
     `;
     
@@ -1367,5 +1405,314 @@ document.addEventListener("DOMContentLoaded", () => {
     allActions.forEach(actions => {
       actions.style.display = 'flex';
     });
+  }
+
+  // Fonctions pour la navigation clavier
+  function initializeKeyboardNavigation() {
+    if (!KEYBOARD_CONFIG.enableNavigation) return;
+    
+    // Rendre le conteneur focusable
+    const treeContainer = document.getElementById('tree-container');
+    treeContainer.setAttribute('tabindex', '0');
+    treeContainer.addEventListener('keydown', handleKeyboardNavigation);
+    
+    // Initialiser la sélection sur le premier élément
+    setTimeout(() => {
+      selectFirstNode();
+    }, 100);
+    
+    addLog('Navigation clavier initialisée');
+  }
+
+  function handleKeyboardNavigation(e) {
+    if (!keyboardNavigationEnabled) return;
+    
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        navigateDown();
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        navigateUp();
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        expandOrNavigateRight();
+        break;
+      case 'ArrowLeft':
+        e.preventDefault();
+        collapseOrNavigateLeft();
+        break;
+      case 'Enter':
+        e.preventDefault();
+        activateSelectedNode();
+        break;
+      case 'Escape':
+        e.preventDefault();
+        clearSelection();
+        break;
+    }
+  }
+
+  function selectFirstNode() {
+    const firstNode = document.querySelector('.tree-node-line');
+    if (firstNode) {
+      selectNode(firstNode.dataset.id);
+    }
+  }
+
+  function selectNode(nodeId) {
+    // Retirer la sélection précédente
+    clearSelection();
+    
+    // Sélectionner le nouveau nœud
+    const nodeElement = document.querySelector(`[data-id="${nodeId}"]`);
+    if (nodeElement) {
+      nodeElement.classList.add('keyboard-selected');
+      selectedNodeId = nodeId;
+      
+      // Faire défiler vers l'élément si nécessaire
+      nodeElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      
+      addLog(`Élément sélectionné: ${nodeId}`);
+    }
+  }
+
+  function clearSelection() {
+    const selectedElements = document.querySelectorAll('.keyboard-selected');
+    selectedElements.forEach(el => el.classList.remove('keyboard-selected'));
+    selectedNodeId = null;
+  }
+
+  function navigateDown() {
+    if (!selectedNodeId) {
+      selectFirstNode();
+      return;
+    }
+    
+    const currentElement = document.querySelector(`[data-id="${selectedNodeId}"]`);
+    if (!currentElement) return;
+    
+    const nextElement = getNextVisibleElement(currentElement);
+    if (nextElement) {
+      selectNode(nextElement.dataset.id);
+    }
+  }
+
+  function navigateUp() {
+    if (!selectedNodeId) {
+      selectFirstNode();
+      return;
+    }
+    
+    const currentElement = document.querySelector(`[data-id="${selectedNodeId}"]`);
+    if (!currentElement) return;
+    
+    const prevElement = getPreviousVisibleElement(currentElement);
+    if (prevElement) {
+      selectNode(prevElement.dataset.id);
+    }
+  }
+
+  function expandOrNavigateRight() {
+    if (!selectedNodeId) return;
+    
+    const node = findById(data, selectedNodeId);
+    if (!node) return;
+    
+    if (node.type === 'folder') {
+      if (!node.expanded) {
+        toggleFolder(selectedNodeId);
+      } else {
+        // Naviguer vers le premier enfant
+        const firstChild = getFirstChild(node);
+        if (firstChild) {
+          selectNode(firstChild.id);
+        }
+      }
+    }
+  }
+
+  function collapseOrNavigateLeft() {
+    if (!selectedNodeId) return;
+    
+    const node = findById(data, selectedNodeId);
+    if (!node) return;
+    
+    if (node.type === 'folder' && node.expanded) {
+      toggleFolder(selectedNodeId);
+    } else {
+      // Naviguer vers le parent
+      const parent = findParentNode(data, selectedNodeId);
+      if (parent && parent.id !== 'root') {
+        selectNode(parent.id);
+      }
+    }
+  }
+
+  function activateSelectedNode() {
+    if (!selectedNodeId) return;
+    
+    const node = findById(data, selectedNodeId);
+    if (!node) return;
+    
+    if (node.type === 'chat') {
+      // Ouvrir le chat
+      window.open(node.link, '_blank');
+      addLog(`Chat ouvert: ${node.name}`);
+    } else if (node.type === 'folder') {
+      // Toggle le dossier
+      toggleFolder(selectedNodeId);
+    }
+  }
+
+  function getNextVisibleElement(currentElement) {
+    const allElements = Array.from(document.querySelectorAll('.tree-node-line'));
+    const currentIndex = allElements.indexOf(currentElement);
+    
+    for (let i = currentIndex + 1; i < allElements.length; i++) {
+      const element = allElements[i];
+      if (isElementVisible(element)) {
+        return element;
+      }
+    }
+    return null;
+  }
+
+  function getPreviousVisibleElement(currentElement) {
+    const allElements = Array.from(document.querySelectorAll('.tree-node-line'));
+    const currentIndex = allElements.indexOf(currentElement);
+    
+    for (let i = currentIndex - 1; i >= 0; i--) {
+      const element = allElements[i];
+      if (isElementVisible(element)) {
+        return element;
+      }
+    }
+    return null;
+  }
+
+  function isElementVisible(element) {
+    const rect = element.getBoundingClientRect();
+    const container = document.getElementById('tree-container');
+    const containerRect = container.getBoundingClientRect();
+    
+    return rect.top >= containerRect.top && rect.bottom <= containerRect.bottom;
+  }
+
+  function getFirstChild(folder) {
+    if (!folder.children || folder.children.length === 0) return null;
+    return folder.children[0];
+  }
+
+  // Raccourcis clavier globaux
+  function initializeKeyboardShortcuts() {
+    if (!KEYBOARD_CONFIG.enableShortcuts) return;
+    
+    document.addEventListener('keydown', handleKeyboardShortcuts);
+    addLog('Raccourcis clavier initialisés');
+  }
+
+  function handleKeyboardShortcuts(e) {
+    // Ne pas intercepter si on est dans un input
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+      return;
+    }
+    
+    // Ctrl+N : Nouveau chat
+    if (e.ctrlKey && e.key === 'n') {
+      e.preventDefault();
+      addChatFromShortcut();
+    }
+    
+    // Ctrl+F : Focus sur la recherche
+    if (e.ctrlKey && e.key === 'f') {
+      e.preventDefault();
+      focusSearchInput();
+    }
+    
+    // Ctrl+Shift+N : Nouveau dossier
+    if (e.ctrlKey && e.shiftKey && e.key === 'N') {
+      e.preventDefault();
+      addFolderFromShortcut();
+    }
+    
+    // Ctrl+E : Modifier l'élément sélectionné
+    if (e.ctrlKey && e.key === 'e') {
+      e.preventDefault();
+      editSelectedNode();
+    }
+    
+    // Delete : Supprimer l'élément sélectionné
+    if (e.key === 'Delete') {
+      e.preventDefault();
+      deleteSelectedNode();
+    }
+  }
+
+  function addChatFromShortcut() {
+    if (selectedNodeId) {
+      const node = findById(data, selectedNodeId);
+      if (node && node.type === 'folder') {
+        addChat(selectedNodeId);
+        addLog('Nouveau chat ajouté via raccourci Ctrl+N');
+      } else {
+        // Ajouter dans le dossier parent
+        const parent = findParentNode(data, selectedNodeId);
+        if (parent) {
+          addChat(parent.id);
+          addLog('Nouveau chat ajouté via raccourci Ctrl+N');
+        }
+      }
+    } else {
+      // Ajouter dans le dossier racine
+      addChat('root');
+      addLog('Nouveau chat ajouté via raccourci Ctrl+N');
+    }
+  }
+
+  function addFolderFromShortcut() {
+    if (selectedNodeId) {
+      const node = findById(data, selectedNodeId);
+      if (node && node.type === 'folder') {
+        addFolder(selectedNodeId);
+        addLog('Nouveau dossier ajouté via raccourci Ctrl+Shift+N');
+      } else {
+        // Ajouter dans le dossier parent
+        const parent = findParentNode(data, selectedNodeId);
+        if (parent) {
+          addFolder(parent.id);
+          addLog('Nouveau dossier ajouté via raccourci Ctrl+Shift+N');
+        }
+      }
+    } else {
+      // Ajouter dans le dossier racine
+      addFolder('root');
+      addLog('Nouveau dossier ajouté via raccourci Ctrl+Shift+N');
+    }
+  }
+
+  function focusSearchInput() {
+    const searchInput = document.querySelector('.search-bar input');
+    if (searchInput) {
+      searchInput.focus();
+      searchInput.select();
+      addLog('Focus sur la barre de recherche via Ctrl+F');
+    }
+  }
+
+  function editSelectedNode() {
+    if (selectedNodeId) {
+      editNode(selectedNodeId);
+      addLog('Édition via raccourci Ctrl+E');
+    }
+  }
+
+  function deleteSelectedNode() {
+    if (selectedNodeId) {
+      deleteNode(selectedNodeId);
+      addLog('Suppression via raccourci Delete');
+    }
   }
 });

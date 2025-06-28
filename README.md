@@ -4,6 +4,31 @@ Une extension Chrome pour organiser et gérer vos conversations ChatGPT et autre
 
 ## Fonctionnalités
 
+### Version 1.2.6
+- **Navigation clavier complète** : Navigation dans l'arbre avec les touches flèches
+- **Navigation Tab** : Navigation entre les éléments interactifs avec Tab/Shift+Tab
+- **Raccourcis clavier** : Ctrl+N (nouveau chat), Ctrl+Shift+N (nouveau dossier), Ctrl+F (recherche), Ctrl+E (modifier), Delete (supprimer)
+- **Focus styles** : Indicateurs visuels pour la navigation clavier avec surbrillance bleue
+- **Support des lecteurs d'écran** : ARIA labels complets pour tous les éléments interactifs
+- **Amélioration de l'accessibilité** : Support complet de la navigation au clavier et des technologies d'assistance
+- **Contrastes améliorés** : Meilleurs ratios de contraste pour l'accessibilité
+- **Mode sombre compatible** : Tous les indicateurs de focus adaptés au thème sombre
+
+## Raccourcis Clavier
+
+- **Flèches** : Navigation dans l'arbre
+  - ↑/↓ : Naviguer entre les éléments
+  - → : Développer un dossier ou naviguer vers le premier enfant
+  - ← : Réduire un dossier ou naviguer vers le parent
+- **Tab/Shift+Tab** : Navigation native entre tous les éléments interactifs (boutons, inputs, liens)
+- **Entrée** : Ouvrir le chat sélectionné ou développer/réduire le dossier
+- **Échap** : Effacer la sélection
+- **Ctrl+N** : Nouveau chat
+- **Ctrl+Shift+N** : Nouveau dossier
+- **Ctrl+F** : Focus sur la recherche
+- **Ctrl+E** : Modifier l'élément sélectionné
+- **Suppr** : Supprimer l'élément sélectionné
+
 ### Version 1.2.5
 - **Barre de recherche intelligente** : Recherche en temps réel dans les noms de chats et les tags
 - **Recherche optimisée** : Indexation des données pour des performances optimales
@@ -145,8 +170,90 @@ Un mode debug est intégré à l'extension :
 - Pour l'activer, il suffit d'appeler la fonction `toggleDebugZone()` dans la console de l'extension (clic droit sur la popup → Inspecter → Console), ou d'ajouter un bouton dans le HTML si besoin.
 - Utile pour le diagnostic ou le développement avancé.
 
+## Recommandations d'amélioration
+
+### 🎯 Priorité haute - Accessibilité
+
+#### Amélioration de l'accessibilité
+- **Taille de police** : Option pour augmenter la taille du texte
+
+### 🎨 Priorité moyenne - Expérience utilisateur
+
+#### Indicateurs visuels
+- **Statut des chats** : Indicateur lu/non lu (point rouge)
+- **Dossiers vides** : Style différent pour les dossiers sans contenu
+- **Éléments récents** : Surbrillance des éléments ajoutés récemment
+- **Progression** : Indicateur de chargement pour les actions longues
+
+#### Actions contextuelles
+- **Menu contextuel** : Clic droit pour actions rapides
+- **Actions groupées** : Sélection multiple pour actions en lot
+- **Favoris** : Système de favoris pour les chats importants
+- **Historique** : Liste des derniers chats consultés
+
+#### Fonctionnalités avancées
+- **Undo/Redo** : Annuler/rétablir les actions importantes
+- **Recherche avancée** : Filtres par date, tag, dossier
+- **Tri personnalisé** : Options de tri (nom, date, taille)
+
+### 🚀 Priorité basse - Fonctionnalités avancées
+
+#### Import/Export
+- **Export JSON** : Sauvegarde des données au format JSON
+- **Import JSON** : Restauration depuis un fichier JSON
+- **Export CSV** : Export pour analyse dans Excel
+- **Sauvegarde cloud** : Synchronisation avec Google Drive
+
+#### Synchronisation
+- **Multi-appareils** : Synchronisation entre différents navigateurs
+- **Compte utilisateur** : Système de compte pour la synchronisation
+- **Collaboration** : Partage de dossiers entre utilisateurs
+- **Versioning** : Historique des modifications
+
+#### Statistiques et analytics
+- **Dashboard** : Vue d'ensemble avec statistiques
+- **Graphiques** : Visualisation de l'utilisation
+- **Rapports** : Export de rapports d'utilisation
+- **Insights** : Suggestions d'organisation basées sur l'usage
+
+### ⚡ Performance et optimisation
+
+#### Lazy loading
+- **Chargement à la demande** : Chargement des dossiers uniquement quand nécessaire
+- **Virtualisation** : Affichage optimisé pour de gros volumes de données
+- **Cache intelligent** : Mise en cache des données fréquemment utilisées
+- **Compression** : Compression des données pour économiser l'espace
+
+#### Optimisations techniques
+- **Service Worker** : Fonctionnement hors ligne
+- **IndexedDB** : Stockage local plus performant
+- **Web Workers** : Traitement en arrière-plan
+- **Bundle optimization** : Réduction de la taille du code
+
+### 🎯 Feuille de route suggérée
+
+#### Version 1.3.0 (Court terme)
+- Menu contextuel
+- Indicateurs visuels
+- Système Undo/Redo
+
+#### Version 2.0.0 (Long terme)
+- Import/Export complet
+- Synchronisation multi-appareils
+- Dashboard avec statistiques
+
+### 💡 Notes d'implémentation
+
+- **Compatibilité** : Maintenir la compatibilité avec les versions existantes
+- **Performance** : Tester les nouvelles fonctionnalités avec de gros volumes de données
+- **UX** : Consulter les utilisateurs pour valider les nouvelles fonctionnalités
+- **Documentation** : Mettre à jour la documentation pour chaque nouvelle fonctionnalité
+
+Ces recommandations visent à transformer une excellente extension en une solution de référence pour la gestion de conversations IA.
+
 ## Versions
 
+- **1.2.6** : Navigation clavier complète, raccourcis clavier, focus styles, support des lecteurs d'écran, amélioration de l'accessibilité, contrastes améliorés, mode sombre compatible
 - **1.2.5** : Barre de recherche intelligente, recherche optimisée, debounce intelligent, affichage des résultats, recherche à partir de 2 caractères, mode sombre compatible, actions intégrées
 - **1.2.4** : Tags pour les chats, affichage des tags, champ non obligatoire, style adaptatif, design cohérent
 - **1.2.3** : Boutons tout ouvrir/fermer, navigation rapide, sauvegarde automatique, logs d'activité

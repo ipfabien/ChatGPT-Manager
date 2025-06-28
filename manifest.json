@@ -1,20 +1,20 @@
 {
   "manifest_version": 3,
   "name": "ChatGPT Manager",
-  "version": "1.2.5",
-  "description": "Organisez vos chats IA dans des dossiers avec drag & drop",
+  "version": "1.2.8",
+  "description": "Organisez et gérez vos conversations ChatGPT avec une interface arborescente intuitive. Fonctionnalités : organisation en dossiers, recherche intelligente, navigation clavier complète (flèches, Tab, raccourcis), tags, support des lecteurs d'écran (ARIA labels), et plus encore.",
   "permissions": [
     "storage",
-    "tabs"
+    "activeTab"
   ],
   "action": {
     "default_icon": "icon.png"
   },
+  "background": {
+    "service_worker": "background.js"
+  },
   "icons": {
     "48": "icon.png",
     "128": "icon.png"
-  },
-  "background": {
-    "service_worker": "background.js"
   }
 }
