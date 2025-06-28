@@ -4,6 +4,13 @@ Une extension Chrome pour organiser et gérer vos conversations ChatGPT et autre
 
 ## Fonctionnalités
 
+### Version 1.2.2
+- **Formulaires inline dans l'arbre** : Remplacement des formulaires modaux par des formulaires intégrés directement dans l'arbre
+- **Design compact et cohérent** : Style simple avec fond gris, alignement horizontal et boutons icônes
+- **Meilleure expérience utilisateur** : Les formulaires apparaissent juste en dessous du dossier parent
+- **Structure simplifiée** : Champs avec placeholders et boutons check/close uniquement
+- **Support mode sombre** : Couleurs adaptées pour le thème sombre
+
 ### Version 1.2.1
 - **Icônes d'ajout plus explicites** : Remplacement des icônes génériques par des icônes plus descriptives
   - Ajout de chat : `chat_bubble_outline` (bulle de chat)
@@ -118,6 +125,7 @@ Un mode debug est intégré à l'extension :
 
 ## Versions
 
+- **1.2.2** : Formulaires inline dans l'arbre - design compact et cohérent, meilleure expérience utilisateur
 - **1.2.1** : Améliorations graphiques - icônes d'ajout plus explicites, icônes de drop cohérentes dans la charte graphique bleue
 - **1.2.0** : Nouveau design moderne avec Material Design, mode sombre/clair, interface épurée
 - **1.1.1** : Fenêtre dédiée et version plein écran

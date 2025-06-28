@@ -259,64 +259,59 @@ ul ul ul .tree-node-line {
   color: #000;
 }
 
-/* Formulaires modaux */
-#folder-form, #chat-form {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-  z-index: 1000;
-  min-width: 300px;
+/* Formulaires inline dans l'arbre */
+.inline-form {
+  margin: 8px 0 8px 32px;
 }
 
-#folder-form form, #chat-form form {
+.inline-form form {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  gap: 8px;
+  align-items: center;
+  background: #f0f0f0;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
 }
 
-#folder-form label, #chat-form label {
-  font-weight: 600;
-  color: #333;
-}
-
-#folder-form input, #chat-form input {
-  padding: 8px 12px;
-  border: 1px solid #ddd;
+.inline-form input {
+  padding: 6px;
+  font-size: 13px;
+  border: 1px solid #bbb;
   border-radius: 4px;
-  font-size: 14px;
+  min-width: 120px;
 }
 
-.btn-green {
-  background: #28a745;
-  color: white;
+.inline-form button {
+  background: none;
   border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
   cursor: pointer;
-  font-size: 14px;
+  color: #444;
+  font-size: 20px;
 }
 
-.btn-green:hover {
-  background: #218838;
+.inline-form button:hover {
+  color: #000;
 }
 
-#cancel-folder, #cancel-chat {
-  background: #6c757d;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
+/* Mode sombre pour les formulaires */
+body.dark-mode .inline-form form {
+  background: #2a2a2a;
+  border-color: #444;
 }
 
-#cancel-folder:hover, #cancel-chat:hover {
-  background: #5a6268;
+body.dark-mode .inline-form input {
+  background: #444;
+  border-color: #666;
+  color: #fff;
+}
+
+body.dark-mode .inline-form button {
+  color: #ccc;
+}
+
+body.dark-mode .inline-form button:hover {
+  color: #fff;
 }
 
 /* Debug area */

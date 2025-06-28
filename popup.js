@@ -1,12 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
   const treeContainer = document.getElementById("tree-container");
-  const addFolderForm = document.getElementById("folder-form");
-  const addChatForm = document.getElementById("chat-form");
-  const cancelFolderBtn = document.getElementById("cancel-folder");
-  const cancelChatBtn = document.getElementById("cancel-chat");
-  const folderNameInput = document.getElementById("folder-name");
-  const chatNameInput = document.getElementById("chat-name");
-  const chatLinkInput = document.getElementById("chat-link");
 
   // Écouteurs d'événements pour les nouvelles fonctionnalités (mode statique)
   document.getElementById("toggle-theme").addEventListener("click", function() {
@@ -617,24 +610,57 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function hideForms() {
-    addFolderForm.style.display = "none";
-    addChatForm.style.display = "none";
+    // Supprimer les formulaires inline
+    const inlineForms = document.querySelectorAll('.inline-form');
+    inlineForms.forEach(form => {
+      form.remove();
+    });
   }
 
   function openEditFolderForm(node) {
     hideForms();
-    addFolderForm.style.display = "block";
     
-    if (node) {
-      folderNameInput.value = node.name;
-    } else {
-      folderNameInput.value = "";
+    // Créer le formulaire inline
+    const formContainer = document.createElement('div');
+    formContainer.className = 'inline-form';
+    formContainer.id = 'inline-folder-form';
+    
+    const formHtml = `
+      <form>
+        <input type="text" placeholder="Nom du dossier" value="${node ? node.name : ''}" required />
+        <button type="submit"><span class="material-icons">check</span></button>
+        <button type="button" onclick="hideForms()"><span class="material-icons">close</span></button>
+      </form>
+    `;
+    
+    formContainer.innerHTML = formHtml;
+    
+    // Insérer le formulaire dans l'arbre
+    const parentElement = document.querySelector(`[data-id="${currentAddParentId}"]`);
+    if (parentElement) {
+      const parentLi = parentElement.closest('li');
+      const parentUl = parentLi.querySelector('ul');
+      
+      if (parentUl) {
+        // Insérer après le premier enfant (après le dossier parent)
+        parentUl.insertBefore(formContainer, parentUl.firstChild);
+      } else {
+        // Créer une nouvelle liste si elle n'existe pas
+        const newUl = document.createElement('ul');
+        newUl.appendChild(formContainer);
+        parentLi.appendChild(newUl);
+      }
     }
-    folderNameInput.focus();
+    
+    // Focus sur le champ de saisie
+    const nameInput = formContainer.querySelector('input');
+    nameInput.focus();
+    if (!node) nameInput.select();
 
-    addFolderForm.querySelector('form').onsubmit = (e) => {
+    // Gestionnaire de soumission
+    formContainer.querySelector('form').onsubmit = (e) => {
       e.preventDefault();
-      const name = folderNameInput.value.trim();
+      const name = nameInput.value.trim();
       if (!name) return alert("Le nom du dossier est obligatoire.");
 
       if (currentEditNode) {
@@ -662,20 +688,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function openEditChatForm(node) {
     hideForms();
-    addChatForm.style.display = "block";
-    if (node) {
-      chatNameInput.value = node.name;
-      chatLinkInput.value = node.link;
-    } else {
-      chatNameInput.value = "";
-      chatLinkInput.value = "";
+    
+    // Créer le formulaire inline
+    const formContainer = document.createElement('div');
+    formContainer.className = 'inline-form';
+    formContainer.id = 'inline-chat-form';
+    
+    const formHtml = `
+      <form>
+        <input type="text" placeholder="Nom du chat" value="${node ? node.name : ''}" required />
+        <input type="url" placeholder="Lien vers le chat" value="${node ? node.link : ''}" required />
+        <button type="submit"><span class="material-icons">check</span></button>
+        <button type="button" onclick="hideForms()"><span class="material-icons">close</span></button>
+      </form>
+    `;
+    
+    formContainer.innerHTML = formHtml;
+    
+    // Insérer le formulaire dans l'arbre
+    const parentElement = document.querySelector(`[data-id="${currentAddParentId}"]`);
+    if (parentElement) {
+      const parentLi = parentElement.closest('li');
+      const parentUl = parentLi.querySelector('ul');
+      
+      if (parentUl) {
+        // Insérer après le premier enfant (après le dossier parent)
+        parentUl.insertBefore(formContainer, parentUl.firstChild);
+      } else {
+        // Créer une nouvelle liste si elle n'existe pas
+        const newUl = document.createElement('ul');
+        newUl.appendChild(formContainer);
+        parentLi.appendChild(newUl);
+      }
     }
-    chatNameInput.focus();
+    
+    // Focus sur le premier champ
+    const nameInput = formContainer.querySelector('input[type="text"]');
+    nameInput.focus();
+    if (!node) nameInput.select();
 
-    addChatForm.querySelector('form').onsubmit = (e) => {
+    // Gestionnaire de soumission
+    formContainer.querySelector('form').onsubmit = (e) => {
       e.preventDefault();
-      const name = chatNameInput.value.trim();
-      const link = chatLinkInput.value.trim();
+      const name = nameInput.value.trim();
+      const link = formContainer.querySelector('input[type="url"]').value.trim();
       if (!name || !link) return alert("Le nom et le lien du chat sont obligatoires.");
 
       if (currentEditNode) {
@@ -699,14 +755,6 @@ document.addEventListener("DOMContentLoaded", () => {
       renderTree();
     };
   }
-
-  cancelFolderBtn.addEventListener("click", () => {
-    hideForms();
-  });
-
-  cancelChatBtn.addEventListener("click", () => {
-    hideForms();
-  });
 
   loadData().then(() => {
     renderTree();
