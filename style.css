@@ -1,22 +1,115 @@
+/* RESET + base */
 body {
-  width: 100%;
-  height: 100vh;
   margin: 0;
-  padding: 15px;
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', sans-serif;
   font-size: 14px;
-  background-color: #f5f5f5;
-  overflow: hidden;
+  background-color: #f9f9f9;
+  color: #222;
+  min-width: 800px;
+  max-width: 100%;
+  height: 100%;
+  padding: 0;
   box-sizing: border-box;
 }
 
-#app {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+/* Dark mode */
+body.dark-mode {
+  background-color: #1e1e1e;
+  color: #ddd;
 }
 
-#tree-container ul {
+body.dark-mode .tree-node-line,
+body.dark-mode .form-inline-box form {
+  background-color: #2a2a2a;
+}
+
+body.dark-mode .header,
+body.dark-mode .message-bar,
+body.dark-mode .search-bar {
+  background-color: #2f2f2f;
+  border-color: #444;
+}
+
+body.dark-mode input,
+body.dark-mode .form-inline-box input {
+  background-color: #444;
+  color: #fff;
+  border-color: #666;
+}
+
+/* Header */
+.header {
+  background: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #ddd;
+}
+
+.header h1 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.header-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  margin-left: 8px;
+  color: #555;
+}
+
+.header-actions button:hover {
+  color: #000;
+}
+
+/* Message */
+.message-bar {
+  background: #e3f2fd;
+  border-bottom: 1px solid #2196f3;
+  padding: 8px 16px;
+  font-size: 13px;
+  color: #1976d2;
+}
+
+/* Search bar */
+.search-bar {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid #ddd;
+  gap: 8px;
+}
+
+.search-bar input {
+  flex-grow: 1;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.search-bar button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #666;
+  cursor: pointer;
+}
+
+.search-bar button:hover {
+  color: #000;
+}
+
+/* Tree container */
+#tree-container {
+  padding: 16px;
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+}
+
+ul {
   list-style-type: none;
   padding-left: 0;
   margin: 0;
@@ -25,346 +118,233 @@ body {
 .tree-node-line {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 2px;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
+  background: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  transition: background-color 0.2s;
 }
 
 .tree-node-line:hover {
-  background-color: #f5f5f5;
+  background: #eef1f5;
 }
 
-.draggable .tree-node-line:hover {
-  background-color: #f0f8ff;
+.tree-node-line .material-icons {
+  font-size: 20px;
+  margin-right: 8px;
+  color: #555;
 }
 
-.toggle-icon {
-  user-select: none;
-  width: 16px;
-  text-align: center;
+.chat-link {
+  color: #0073e6;
+  text-decoration: none;
+  margin-right: 8px;
 }
 
-.folder-name, .chat-name {
-  cursor: pointer;
-  flex-grow: 1;
-  user-select: none;
-  padding: 2px 4px;
-  border-radius: 3px;
-  transition: all 0.2s ease;
-}
-
-.folder-name {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-.folder-name:hover {
-  background-color: #ecf0f1;
-  color: #34495e;
-}
-
-.chat-name {
-  color: #007bff;
+.chat-link:hover {
   text-decoration: underline;
 }
 
-.chat-name:hover {
-  background-color: #e3f2fd;
-  color: #0056b3;
-  text-decoration: none;
+/* Folder name */
+.folder-name {
+  font-weight: 600;
+  margin-right: 6px;
 }
 
-button.edit-btn {
+/* Counter */
+.folder-counter {
+  background-color: #e0e0e0;
+  color: #333;
+  border-radius: 12px;
+  padding: 2px 6px;
+  font-size: 12px;
+  margin-right: auto;
+}
+
+/* Tags */
+.tag {
+  background-color: #cce5ff;
+  color: #004085;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 11px;
+  margin-right: auto;
+  margin-left: 4px;
+}
+
+/* Edit buttons */
+.edit-btns {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+}
+
+.edit-btns .material-icons {
+  font-size: 18px;
+  color: #888;
+  cursor: pointer;
+}
+
+.edit-btns .material-icons:hover {
+  color: #000;
+}
+
+body.dark-mode .edit-btns .material-icons:hover {
+  color: #fff;
+}
+
+/* Bouton toggle pour ouvrir/fermer les dossiers */
+.toggle-icon {
+  font-size: 18px !important;
+  margin-right: 4px !important;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  user-select: none;
+}
+
+.toggle-icon:hover {
+  color: #000 !important;
+  transform: scale(1.1);
+}
+
+body.dark-mode .toggle-icon:hover {
+  color: #fff !important;
+}
+
+/* Nested structure indentation */
+.tree-node-line {
+  margin-left: 16px;
+}
+
+ul ul .tree-node-line {
+  margin-left: 32px;
+}
+
+ul ul ul .tree-node-line {
+  margin-left: 48px;
+}
+
+/* Inline form */
+.form-inline-box {
+  margin: 8px 0 8px 32px;
+}
+
+.form-inline-box form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: #f0f0f0;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.form-inline-box input {
+  padding: 6px;
+  font-size: 13px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  min-width: 120px;
+}
+
+.form-inline-box button {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 14px;
-  padding: 4px 6px;
   color: #444;
-  border-radius: 4px;
-  transition: all 0.2s ease;
+  font-size: 20px;
 }
 
-button.edit-btn:hover {
-  background-color: #e3f2fd;
-  color: #1976d2;
-  transform: scale(1.1);
+.form-inline-box button:hover {
+  color: #000;
+}
+
+/* Formulaires modaux */
+#folder-form, #chat-form {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  z-index: 1000;
+  min-width: 300px;
+}
+
+#folder-form form, #chat-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#folder-form label, #chat-form label {
+  font-weight: 600;
+  color: #333;
+}
+
+#folder-form input, #chat-form input {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
 .btn-green {
-  background-color: #28a745;
+  background: #28a745;
   color: white;
   border: none;
+  padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 14px;
 }
 
 .btn-green:hover {
-  background-color: #218838;
+  background: #218838;
 }
 
-.btn-small {
-  font-size: 14px;
-  padding: 3px 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Formulaires */
-form {
-  margin-top: 8px;
-  background: white;
-  padding: 10px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-form label {
-  display: block;
-  margin-bottom: 3px;
-  font-weight: bold;
-  font-size: 12px;
-}
-
-form input[type="text"], form input[type="url"] {
-  width: 100%;
-  padding: 6px;
-  box-sizing: border-box;
-  margin-bottom: 8px;
-  font-size: 13px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-}
-
-/* Boutons d'annulation */
-button#cancel-folder, button#cancel-chat {
-  background-color: #dc3545;
-  border: none;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-  margin-left: 8px;
-}
-
-button#cancel-folder:hover, button#cancel-chat:hover {
-  background-color: #c82333;
-}
-
-/* Styles pour le drag and drop */
-.draggable {
-  cursor: grab;
-  transition: all 0.2s ease;
-}
-
-.draggable:active {
-  cursor: grabbing;
-}
-
-.dragging {
-  opacity: 0.5;
-  transform: rotate(5deg);
-  z-index: 1000;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  border-radius: 4px;
-  background-color: #fff;
-}
-
-.drop-zone {
-  transition: all 0.2s ease;
-  border-radius: 4px;
-  padding: 2px;
-}
-
-.drop-zone.drag-over {
-  background-color: #e3f2fd;
-  border: 2px dashed #2196f3;
-  transform: scale(1.02);
-  border-radius: 6px;
-  transition: all 0.2s ease;
-}
-
-.drop-zone.drop-valid {
-  background-color: #e8f5e8;
-  border: 2px dashed #4caf50;
-  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
-}
-
-.drop-zone.drop-invalid {
-  background-color: #ffebee;
-  border: 2px dashed #f44336;
-  box-shadow: 0 2px 4px rgba(244, 67, 54, 0.3);
-}
-
-.drag-handle {
-  cursor: grab;
-  padding: 2px 4px;
-  margin-right: 4px;
-  border-radius: 3px;
-  background-color: #f0f0f0;
-  font-size: 12px;
-  user-select: none;
-  color: #666;
-  transition: all 0.2s ease;
-  display: inline-block;
-  min-width: 16px;
-  text-align: center;
-}
-
-.drag-handle:hover {
-  background-color: #e0e0e0;
-  color: #333;
-  transform: scale(1.1);
-}
-
-.drag-handle:active {
-  cursor: grabbing;
-  background-color: #d0d0d0;
-}
-
-/* Indicateur de drop */
-.drop-indicator {
-  height: 2px;
-  background-color: #2196f3;
-  margin: 2px 0;
-  border-radius: 1px;
-  transition: all 0.2s ease;
-}
-
-.drop-indicator.show {
-  height: 4px;
-  background-color: #4caf50;
-}
-
-/* Badge de compteur de chats */
-.chat-count-badge {
-  background-color: #007bff;
-  color: white;
-  font-size: 10px;
-  font-weight: bold;
-  padding: 2px 6px;
-  border-radius: 10px;
-  margin-left: 8px;
-  min-width: 16px;
-  text-align: center;
-  display: inline-block;
-  line-height: 1;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease;
-}
-
-.chat-count-badge:hover {
-  background-color: #0056b3;
-  transform: scale(1.1);
-}
-
-/* Badge spécial pour le dossier racine */
-.chat-count-badge.root-badge {
-  background-color: #28a745;
-  font-size: 11px;
-  padding: 3px 8px;
-  border: 2px solid #20c997;
-}
-
-.chat-count-badge.root-badge:hover {
-  background-color: #218838;
-  border-color: #1ea085;
-  transform: scale(1.15);
-}
-
-/* Section d'information */
-.info-section {
-  margin: 8px 0 0 0;
-  padding: 8px;
-  background-color: #f8f9fa;
-  border-radius: 4px;
-  border-left: 3px solid #007bff;
-}
-
-.info-section p {
-  margin: 0 0 8px 0;
-  font-size: 11px;
-  color: #495057;
-}
-
-/* Boutons Reset et Logs */
-.reset-btn, .logs-btn {
-  margin-right: 8px;
-  padding: 6px 12px;
-  font-size: 11px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-weight: 500;
-}
-
-.reset-btn {
-  background: #dc3545;
-  color: white;
-}
-
-.reset-btn:hover {
-  background: #c82333;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
-}
-
-.logs-btn {
+#cancel-folder, #cancel-chat {
   background: #6c757d;
   color: white;
-}
-
-.logs-btn:hover {
-  background: #5a6268;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
-}
-
-/* Header avec version */
-.header {
-  text-align: center;
-  margin-bottom: 10px;
-  padding-bottom: 8px;
-  border-bottom: 2px solid #e0e0e0;
-  flex-shrink: 0;
-}
-
-.header h1 {
-  margin: 0 0 3px 0;
-  color: #1976d2;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.header p {
-  margin: 0;
-  color: #666;
-  font-size: 11px;
-  font-style: italic;
-}
-
-/* Zone d'information compacte */
-.info-banner {
-  background-color: #e3f2fd;
-  border: 1px solid #2196f3;
+  border: none;
+  padding: 8px 16px;
   border-radius: 4px;
-  padding: 8px;
-  margin-bottom: 10px;
-  font-size: 11px;
-  flex-shrink: 0;
+  cursor: pointer;
+  font-size: 14px;
 }
 
-/* Container principal avec scroll */
-#tree-container {
-  flex: 1;
+#cancel-folder:hover, #cancel-chat:hover {
+  background: #5a6268;
+}
+
+/* Debug area */
+#debug-area {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 12px;
+  max-height: 200px;
   overflow-y: auto;
-  overflow-x: hidden;
-  padding-right: 5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 16px;
+  }
+
+  .tree-node-line {
+    flex-wrap: wrap;
+  }
+
+  .edit-btns {
+    margin-top: 6px;
+  }
 }
 
 /* Scrollbar personnalisée */
@@ -384,4 +364,191 @@ button#cancel-folder:hover, button#cancel-chat:hover {
 
 #tree-container::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
+}
+
+/* Boutons de debug */
+.debug-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.debug-btn:hover {
+  background: #5a6268;
+}
+
+/* Styles pour le drag and drop */
+.draggable {
+  cursor: grab;
+  transition: all 0.2s ease;
+}
+
+.draggable:active {
+  cursor: grabbing;
+}
+
+/* S'assurer que tous les éléments enfants permettent le drag */
+.tree-node-line * {
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
+
+/* Réactiver les pointer-events pour les boutons d'action */
+.tree-node-line .edit-btns *,
+.tree-node-line .toggle-icon {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* Permettre le drag sur les liens de chat mais empêcher le drag des images */
+.tree-node-line .chat-link {
+  pointer-events: auto;
+  cursor: pointer;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
+
+/* S'assurer que les icônes Material Design ne bloquent pas le drag */
+.tree-node-line .material-icons {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
+
+/* Forcer le drag sur l'élément parent */
+.tree-node-line {
+  -webkit-user-drag: element;
+  -khtml-user-drag: element;
+  -moz-user-drag: element;
+  -o-user-drag: element;
+  user-drag: element;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+/* États de drag and drop */
+.tree-node-line.dragging {
+  opacity: 0.7;
+  transform: rotate(8deg) scale(1.05);
+  z-index: 1000;
+  background-color: rgba(255, 193, 7, 0.2) !important;
+  border: 3px dashed #ffc107 !important;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
+  position: relative;
+  transition: all 0.1s ease;
+}
+
+.tree-node-line.dragging::after {
+  content: "🔄";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: translateY(-50%) rotate(0deg); }
+  to { transform: translateY(-50%) rotate(360deg); }
+}
+
+.tree-node-line.drag-over {
+  background-color: rgba(33, 150, 243, 0.1);
+  border: 2px dashed #2196f3;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(33, 150, 243, 0.3);
+  transform: scale(1.02);
+}
+
+.tree-node-line.drag-over::before {
+  content: "📁";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  animation: bounce 0.6s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(-50%);
+  }
+  40% {
+    transform: translateY(-60%);
+  }
+  60% {
+    transform: translateY(-55%);
+  }
+}
+
+/* Effet de hover pour les éléments draggables */
+.tree-node-line:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Mode sombre */
+body.dark-mode .tree-node-line:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .tree-node-line.dragging {
+  background-color: rgba(255, 193, 7, 0.3) !important;
+  border-color: #ffc107 !important;
+  box-shadow: 0 6px 20px rgba(255, 193, 7, 0.5);
+}
+
+body.dark-mode .tree-node-line.drag-over {
+  background-color: rgba(33, 150, 243, 0.2);
+  border-color: #2196f3;
+}
+
+/* Styles pour les logs */
+.logs-container {
+  max-height: 150px;
+  overflow-y: auto;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px;
+  margin-top: 10px;
+  font-family: monospace;
+  font-size: 12px;
+  display: none;
+}
+
+body.dark-mode .logs-container {
+  background: #2a2a2a;
+  border-color: #444;
+  color: #fff;
+}
+
+.log-entry {
+  margin: 2px 0;
+  padding: 2px 4px;
+  border-radius: 2px;
+  background: rgba(0,0,0,0.05);
+}
+
+body.dark-mode .log-entry {
+  background: rgba(255,255,255,0.05);
 }

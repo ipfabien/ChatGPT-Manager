@@ -1,74 +1,116 @@
 document.addEventListener("DOMContentLoaded", () => {
   const treeContainer = document.getElementById("tree-container");
-  const addFolderForm = document.getElementById("add-folder-form");
-  const addChatForm = document.getElementById("add-chat-form");
+  const addFolderForm = document.getElementById("folder-form");
+  const addChatForm = document.getElementById("chat-form");
   const cancelFolderBtn = document.getElementById("cancel-folder");
   const cancelChatBtn = document.getElementById("cancel-chat");
   const folderNameInput = document.getElementById("folder-name");
   const chatNameInput = document.getElementById("chat-name");
   const chatLinkInput = document.getElementById("chat-link");
 
-  // Écouteurs d'événements pour les boutons Reset et Logs
-  document.getElementById("resetBtn").addEventListener("click", function() {
-    if (confirm("Êtes-vous sûr de vouloir réinitialiser toutes les données ? Cette action est irréversible.")) {
-      chrome.storage.local.clear(function() {
-        console.log("Données réinitialisées");
+  // Écouteurs d'événements pour les nouvelles fonctionnalités (mode statique)
+  document.getElementById("toggle-theme").addEventListener("click", function() {
+    const body = document.body;
+    if (body.classList.contains('light-mode')) {
+      body.classList.remove('light-mode');
+      body.classList.add('dark-mode');
+      this.querySelector('.material-icons').textContent = 'dark_mode';
+    } else {
+      body.classList.remove('dark-mode');
+      body.classList.add('light-mode');
+      this.querySelector('.material-icons').textContent = 'light_mode';
+    }
+  });
+
+  document.getElementById("fullscreen-btn").addEventListener("click", function() {
+    // Fonctionnalité à implémenter plus tard
+    alert('Fonctionnalité plein écran à implémenter dans une prochaine version');
+  });
+
+  // Barre de recherche (mode statique)
+  const searchInput = document.querySelector('.search-bar input');
+  searchInput.addEventListener('input', function() {
+    // Fonctionnalité à implémenter plus tard
+    console.log('Recherche:', this.value);
+  });
+
+  // Boutons tout ouvrir/fermer (mode statique)
+  document.querySelector('.search-bar button[title="Tout ouvrir"]').addEventListener('click', function() {
+    // Fonctionnalité à implémenter plus tard
+    alert('Fonctionnalité "Tout ouvrir" à implémenter');
+  });
+
+  document.querySelector('.search-bar button[title="Tout fermer"]').addEventListener('click', function() {
+    // Fonctionnalité à implémenter plus tard
+    alert('Fonctionnalité "Tout fermer" à implémenter');
+  });
+
+  // Event listeners pour les boutons de debug
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    if (confirm('Êtes-vous sûr de vouloir réinitialiser toutes les données ?')) {
+      chrome.storage.local.remove(['chatManagerData'], () => {
         location.reload();
       });
     }
   });
 
-  document.getElementById("logsBtn").addEventListener("click", function() {
-    const debugArea = document.getElementById("debug-area");
-    if (debugArea.style.display === "none" || debugArea.style.display === "") {
-      debugArea.style.display = "block";
-      this.textContent = "Masquer Logs";
+  document.getElementById('logsBtn').addEventListener('click', () => {
+    const logsContainer = document.getElementById('logs-container');
+    if (logsContainer.style.display === 'none' || logsContainer.style.display === '') {
+      logsContainer.style.display = 'block';
+      addLog('Zone de logs ouverte');
     } else {
-      debugArea.style.display = "none";
-      this.textContent = "Logs";
+      logsContainer.style.display = 'none';
     }
   });
 
+  // Test des effets visuels
+  function testVisualEffects() {
+    const firstElement = document.querySelector('.tree-node-line');
+    if (firstElement) {
+      console.log('Test des effets visuels sur:', firstElement.dataset.id);
+      console.log('Classes avant:', firstElement.className);
+      
+      // Tester l'effet dragging
+      firstElement.classList.add('dragging');
+      console.log('Classes après dragging:', firstElement.className);
+      
+      setTimeout(() => {
+        firstElement.classList.remove('dragging');
+        firstElement.classList.add('drag-over');
+        console.log('Classes après drag-over:', firstElement.className);
+        
+        setTimeout(() => {
+          firstElement.classList.remove('drag-over');
+          console.log('Test terminé');
+        }, 2000);
+      }, 2000);
+    }
+  }
+
+  // Ajouter un bouton de test temporaire
+  const testBtn = document.createElement('button');
+  testBtn.textContent = 'Test Effets';
+  testBtn.style.position = 'fixed';
+  testBtn.style.top = '10px';
+  testBtn.style.right = '10px';
+  testBtn.style.zIndex = '1000';
+  testBtn.onclick = testVisualEffects;
+  document.body.appendChild(testBtn);
+
+  // Variables globales
   let data = null;
   let currentEditNode = null;
-  let currentAddParentId = "root"; // dossier où on ajoute un nouvel élément
+  let currentAddParentId = "root";
 
   // Variables pour le drag and drop
   let draggedElement = null;
   let draggedNode = null;
   let dropTarget = null;
-  let dragOffset = { x: 0, y: 0 };
+  let currentDraggedId = null; // Variable pour stocker l'ID de l'élément dragué
 
   function saveData() {
     chrome.storage.local.set({ chatManagerData: data });
-  }
-
-  function resetData() {
-    if (confirm("Êtes-vous sûr de vouloir réinitialiser toutes les données ? Cette action supprimera tous vos dossiers et chats et ne peut pas être annulée.")) {
-      // Supprimer toutes les données du localStorage
-      chrome.storage.local.clear(() => {
-        // Réinitialiser la variable data avec les valeurs par défaut
-        data = {
-          id: "root",
-          name: "🏠 Accueil",
-          type: "folder",
-          children: [],
-          expanded: true,
-        };
-        
-        // Sauvegarder les données par défaut
-        saveData();
-        
-        // Recharger l'interface
-        renderTree();
-        
-        // Masquer les formulaires s'ils sont ouverts
-        hideForms();
-        
-        // Afficher un message de confirmation
-        alert("Extension réinitialisée avec succès ! Vous pouvez maintenant recommencer à organiser vos chats.");
-      });
-    }
   }
 
   function loadData() {
@@ -77,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!result.chatManagerData) {
           data = {
             id: "root",
-            name: "🏠 Accueil",
+            name: "Accueil",
             type: "folder",
             children: [],
             expanded: true,
@@ -105,6 +147,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function generateId() {
     return Math.random().toString(36).substr(2, 9);
+  }
+
+  // Fonction pour trier les enfants d'un dossier
+  function sortChildren(children) {
+    if (!children || children.length === 0) return children;
+    
+    // Séparer les dossiers et les chats
+    const folders = children.filter(child => child.type === 'folder');
+    const chats = children.filter(child => child.type === 'chat');
+    
+    // Trier les dossiers par ordre alphabétique
+    folders.sort((a, b) => a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' }));
+    
+    // Trier les chats par ordre alphabétique
+    chats.sort((a, b) => a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' }));
+    
+    // Retourner d'abord les dossiers, puis les chats
+    return [...folders, ...chats];
   }
 
   function countChatsInFolder(folder) {
@@ -137,7 +197,24 @@ document.addEventListener("DOMContentLoaded", () => {
     return false;
   }
 
-  // Fonctions pour le drag and drop
+  // Fonction pour déplacer tous les chats d'un dossier vers son parent
+  function moveAllChatsToParent(folderNode, parentNode) {
+    if (!folderNode.children) return;
+    
+    for (const child of folderNode.children) {
+      if (child.type === "chat") {
+        // Déplacer le chat vers le parent
+        if (!parentNode.children) {
+          parentNode.children = [];
+        }
+        parentNode.children.push(child);
+      } else if (child.type === "folder") {
+        // Récursivement déplacer les chats des sous-dossiers vers le parent
+        moveAllChatsToParent(child, parentNode);
+      }
+    }
+  }
+
   function findParentNode(node, targetId) {
     if (!node.children) return null;
     for (const child of node.children) {
@@ -153,7 +230,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return false;
     }
 
-    // Empêcher de déplacer le dossier racine
     if (sourceNodeId === "root") {
       return false;
     }
@@ -165,13 +241,11 @@ document.addEventListener("DOMContentLoaded", () => {
       return false;
     }
 
-    // Empêcher de déplacer un élément dans son parent actuel (inutile)
     const sourceParent = findParentNode(data, sourceNodeId);
     if (targetNode.id !== "root" && sourceParent && sourceParent.id === targetNodeId) {
       return false;
     }
 
-    // Vérifier que la cible n'est pas un descendant de la source
     function isDescendant(node, potentialDescendantId) {
       if (!node.children) return false;
       for (const child of node.children) {
@@ -196,14 +270,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const [movedNode] = sourceParent.children.splice(sourceIndex, 1);
 
-    // Ajouter le nœud au nouveau parent
     if (targetNode.type === "folder" || targetNode.id === "root") {
       if (!targetNode.children) {
         targetNode.children = [];
       }
       targetNode.children.push(movedNode);
     } else {
-      // Si la cible est un chat, on l'ajoute au parent du chat
       const targetParent = findParentNode(data, targetNodeId);
       if (targetParent) {
         if (!targetParent.children) {
@@ -211,7 +283,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         targetParent.children.push(movedNode);
       } else {
-        // Si pas de parent trouvé, remettre le nœud à sa place
         sourceParent.children.splice(sourceIndex, 0, movedNode);
         return false;
       }
@@ -220,485 +291,324 @@ document.addEventListener("DOMContentLoaded", () => {
     return true;
   }
 
-  function handleDragStart(e) {
-    // Empêcher le drag si on clique sur un bouton ou un lien
-    if (e.target.tagName === 'BUTTON' || e.target.closest('button') || 
-        e.target.tagName === 'A' || e.target.closest('a') ||
-        e.target.classList.contains('chat-name') || e.target.classList.contains('folder-name') ||
-        e.target.classList.contains('toggle-icon')) {
-      e.preventDefault();
-      return;
-    }
-    
-    // Trouver l'élément LI
-    const li = e.target.closest('li');
-    
-    if (!li) {
-      return;
-    }
-    
-    const nodeId = li.dataset.id;
-    
-    if (nodeId === "root") {
-      return;
-    }
-    
-    draggedElement = li;
-    draggedNode = findById(data, nodeId);
-    
-    if (!draggedNode) {
-      return;
-    }
-    
-    // Ajouter la classe de drag
-    draggedElement.classList.add('dragging');
-    
-    // Configurer le dataTransfer correctement
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', draggedNode.id);
-    e.dataTransfer.setData('application/json', JSON.stringify(draggedNode));
+  function getTime() {
+    const now = new Date();
+    return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
   }
 
-  function handleDragOver(e) {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-
-    const targetLi = e.target.closest('li');
-
-    if (!targetLi || !draggedElement) {
-      return;
-    }
-
-    const targetNode = findById(data, targetLi.dataset.id);
-
-    if (!targetNode) {
-      return;
-    }
-
-    // Ne pas changer les classes si la cible n'a pas changé
-    if (dropTarget !== targetLi) {
-      document.querySelectorAll('.drop-zone').forEach(el => {
-        el.classList.remove('drag-over', 'drop-valid', 'drop-invalid');
-      });
-    }
-
-    // Vérifier si le drop est valide
-    const isValidDrop = isValidDropTarget(targetNode);
-
-    if (isValidDrop) {
-      targetLi.classList.add('drop-zone', 'drag-over', 'drop-valid');
-      targetLi.classList.remove('drop-invalid');
-    } else {
-      targetLi.classList.add('drop-zone', 'drag-over', 'drop-invalid');
-      targetLi.classList.remove('drop-valid');
-    }
-
-    dropTarget = targetLi;
-  }
-
-  function isValidDropTarget(targetNode) {
-    if (!draggedNode) {
-      return false;
-    }
-
-    // Le dossier racine peut recevoir des éléments (toujours autorisé)
-    if (targetNode.id === "root") {
-      return true;
-    }
-
-    // Seuls les dossiers peuvent recevoir des éléments
-    if (targetNode.type !== "folder") {
-      return false;
-    }
-
-    // Empêcher de déplacer un élément dans lui-même
-    if (targetNode.id === draggedNode.id) {
-      return false;
-    }
-
-    // Empêcher de déplacer un élément dans son parent actuel (inutile)
-    const sourceParent = findParentNode(data, draggedNode.id);
-    if (sourceParent && sourceParent.id === targetNode.id) {
-      return false;
-    }
-
-    // Empêcher de déplacer un élément dans ses descendants
-    function isDescendant(node, potentialDescendantId) {
-      if (!node.children) return false;
-      for (const child of node.children) {
-        if (child.id === potentialDescendantId) return true;
-        if (isDescendant(child, potentialDescendantId)) return true;
-      }
-      return false;
-    }
-
-    const isDesc = isDescendant(draggedNode, targetNode.id);
-
-    return !isDesc;
-  }
-
-  function handleDragLeave(e) {
-    const targetLi = e.target.closest('li');
-    if (targetLi && targetLi !== dropTarget) {
-      targetLi.classList.remove('drop-zone', 'drag-over', 'drop-valid', 'drop-invalid');
-    }
+  function attachDragListeners() {
+    console.log('Attachement des listeners drag...');
     
-    // Vérifier si on quitte complètement la zone de drop
-    const relatedTarget = e.relatedTarget;
-    if (!relatedTarget || !targetLi?.contains(relatedTarget)) {
-      if (targetLi) {
-        targetLi.classList.remove('drop-zone', 'drag-over', 'drop-valid', 'drop-invalid');
-      }
-    }
-  }
-
-  function handleDrop(e) {
-    e.preventDefault();
-    
-    if (!draggedElement || !dropTarget) {
-      return;
-    }
-    
-    const sourceId = draggedElement.dataset.id;
-    const targetId = dropTarget.dataset.id;
-    
-    // Nettoyer les classes
-    document.querySelectorAll('.drop-zone').forEach(el => {
-      el.classList.remove('drop-zone', 'drag-over', 'drop-valid', 'drop-invalid');
-    });
-    
-    // Effectuer le déplacement
-    if (moveNode(sourceId, targetId)) {
-      saveData();
-      renderTree();
-    }
-    
-    // Réinitialiser
-    if (draggedElement) {
-      draggedElement.classList.remove('dragging');
-    }
-    draggedElement = null;
-    draggedNode = null;
-    dropTarget = null;
-  }
-
-  function handleDragEnd(e) {
-    if (draggedElement) {
-      draggedElement.classList.remove('dragging');
-    }
-    
-    // Nettoyer les classes
-    document.querySelectorAll('.drop-zone').forEach(el => {
-      el.classList.remove('drop-zone', 'drag-over', 'drop-valid', 'drop-invalid');
-    });
-    
-    draggedElement = null;
-    draggedNode = null;
-    dropTarget = null;
+    // Attendre que le DOM soit prêt
+    setTimeout(() => {
+        document.querySelectorAll('.tree-node-line').forEach(node => {
+            const nodeId = node.dataset.id;
+            console.log(`Attachement des listeners pour le nœud: ${nodeId}`);
+            
+            // Marquer comme draggable
+            node.setAttribute('draggable', 'true');
+            node.classList.add('draggable');
+        });
+        
+        // Utiliser la délégation d'événements au niveau du conteneur
+        const treeContainer = document.getElementById('tree-container');
+        
+        // Supprimer les anciens listeners en utilisant removeEventListener
+        // (on va utiliser une fonction nommée pour pouvoir les supprimer)
+        if (treeContainer._dragStartHandler) {
+            treeContainer.removeEventListener('dragstart', treeContainer._dragStartHandler);
+        }
+        if (treeContainer._dragOverHandler) {
+            treeContainer.removeEventListener('dragover', treeContainer._dragOverHandler);
+        }
+        if (treeContainer._dragEnterHandler) {
+            treeContainer.removeEventListener('dragenter', treeContainer._dragEnterHandler);
+        }
+        if (treeContainer._dragLeaveHandler) {
+            treeContainer.removeEventListener('dragleave', treeContainer._dragLeaveHandler);
+        }
+        if (treeContainer._dropHandler) {
+            treeContainer.removeEventListener('drop', treeContainer._dropHandler);
+        }
+        if (treeContainer._dragEndHandler) {
+            treeContainer.removeEventListener('dragend', treeContainer._dragEndHandler);
+        }
+        
+        // Créer les nouveaux handlers
+        treeContainer._dragStartHandler = (e) => {
+            const draggedNode = e.target.closest('.tree-node-line');
+            if (!draggedNode) return;
+            
+            const nodeId = draggedNode.dataset.id;
+            console.log(`[${getTime()}] Drag start sur: ${nodeId}`);
+            e.dataTransfer.setData('text/plain', nodeId);
+            e.dataTransfer.effectAllowed = 'move';
+            draggedNode.classList.add('dragging');
+            
+            // Stocker l'ID de l'élément dragué
+            currentDraggedId = nodeId;
+            
+            // Récupérer le nom de l'élément
+            const folderName = draggedNode.querySelector('.folder-name');
+            const chatLink = draggedNode.querySelector('.chat-link');
+            const elementName = folderName ? folderName.textContent : (chatLink ? chatLink.textContent : 'élément');
+            logMessage(`Début du drag: ${elementName}`);
+            
+            console.log(`[${getTime()}] Classe dragging ajoutée à ${nodeId}, classes actuelles:`, draggedNode.className);
+        };
+        
+        treeContainer._dragOverHandler = (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            
+            const targetNode = e.target.closest('.tree-node-line');
+            if (!targetNode) {
+                console.log(`[${getTime()}] Drag over - aucun nœud trouvé`);
+                return;
+            }
+            
+            const nodeId = targetNode.dataset.id;
+            
+            console.log(`[${getTime()}] Drag over - target: ${nodeId}, dragged: ${currentDraggedId}, isFolder: ${targetNode.classList.contains('folder')}`);
+            
+            if (currentDraggedId && currentDraggedId !== nodeId && targetNode.classList.contains('folder')) {
+                if (!targetNode.classList.contains('drag-over')) {
+                    console.log(`[${getTime()}] Drag over sur dossier: ${nodeId}`);
+                    targetNode.classList.add('drag-over');
+                    console.log(`[${getTime()}] Classe drag-over ajoutée à ${nodeId}, classes actuelles:`, targetNode.className);
+                    logMessage(`Survol zone: ${nodeId}`);
+                }
+            } else if (currentDraggedId && currentDraggedId !== nodeId && !targetNode.classList.contains('folder')) {
+                console.log(`[${getTime()}] Drag over sur non-dossier: ${nodeId}`);
+            }
+        };
+        
+        treeContainer._dragEnterHandler = (e) => {
+            e.preventDefault();
+            const targetNode = e.target.closest('.tree-node-line');
+            if (!targetNode) return;
+            
+            const nodeId = targetNode.dataset.id;
+            console.log(`[${getTime()}] Drag enter sur: ${nodeId}`);
+            
+            if (currentDraggedId && currentDraggedId !== nodeId && targetNode.classList.contains('folder')) {
+                targetNode.classList.add('drag-over');
+                logMessage(`Entrée zone: ${nodeId}`);
+            }
+        };
+        
+        treeContainer._dragLeaveHandler = (e) => {
+            e.preventDefault();
+            const targetNode = e.target.closest('.tree-node-line');
+            if (!targetNode) return;
+            
+            const nodeId = targetNode.dataset.id;
+            console.log(`[${getTime()}] Drag leave sur: ${nodeId}`);
+            
+            // Vérifier si on quitte vraiment l'élément
+            const rect = targetNode.getBoundingClientRect();
+            const x = e.clientX;
+            const y = e.clientY;
+            
+            if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+                targetNode.classList.remove('drag-over');
+                logMessage(`Sortie zone: ${nodeId}`);
+            }
+        };
+        
+        treeContainer._dropHandler = (e) => {
+            e.preventDefault();
+            const targetNode = e.target.closest('.tree-node-line');
+            if (!targetNode) return;
+            
+            const nodeId = targetNode.dataset.id;
+            console.log(`[${getTime()}] Drop sur: ${nodeId}`);
+            
+            if (currentDraggedId && currentDraggedId !== nodeId && targetNode.classList.contains('folder')) {
+                const success = moveNode(currentDraggedId, nodeId);
+                if (success) {
+                    logMessage(`Déplacement réussi: ${currentDraggedId} vers ${nodeId}`);
+                    saveData();
+                    renderTree();
+                    attachDragListeners(); // Réattacher les listeners après le rendu
+                } else {
+                    logMessage(`Échec du déplacement: ${currentDraggedId} vers ${nodeId}`);
+                }
+            }
+            
+            // Nettoyer les classes
+            document.querySelectorAll('.tree-node-line').forEach(n => {
+                n.classList.remove('drag-over');
+            });
+        };
+        
+        treeContainer._dragEndHandler = (e) => {
+            const draggedNode = e.target.closest('.tree-node-line');
+            if (!draggedNode) return;
+            
+            const nodeId = draggedNode.dataset.id;
+            console.log(`[${getTime()}] Drag end sur: ${nodeId}`);
+            draggedNode.classList.remove('dragging');
+            logMessage('Fin du drag');
+            
+            // Réinitialiser l'ID de l'élément dragué
+            currentDraggedId = null;
+            
+            // Nettoyer les classes
+            document.querySelectorAll('.tree-node-line').forEach(n => {
+                n.classList.remove('drag-over');
+            });
+        };
+        
+        // Attacher les nouveaux listeners
+        treeContainer.addEventListener('dragstart', treeContainer._dragStartHandler);
+        treeContainer.addEventListener('dragover', treeContainer._dragOverHandler);
+        treeContainer.addEventListener('dragenter', treeContainer._dragEnterHandler);
+        treeContainer.addEventListener('dragleave', treeContainer._dragLeaveHandler);
+        treeContainer.addEventListener('drop', treeContainer._dropHandler);
+        treeContainer.addEventListener('dragend', treeContainer._dragEndHandler);
+        
+        console.log('Listeners drag attachés avec succès (délégation)');
+    }, 100);
   }
 
   function renderTree() {
-    // Nettoyer les event listeners existants sur les éléments LI
-    const existingLis = treeContainer.querySelectorAll('li');
-    existingLis.forEach(li => {
-      li.removeEventListener('dragstart', handleDragStart);
-      li.removeEventListener('dragover', handleDragOver);
-      li.removeEventListener('dragleave', handleDragLeave);
-      li.removeEventListener('drop', handleDrop);
-      li.removeEventListener('dragend', handleDragEnd);
-    });
+    const treeContainer = document.getElementById('tree-container');
+    treeContainer.innerHTML = '';
     
-    // Nettoyer les variables de drag
-    draggedElement = null;
-    draggedNode = null;
-    dropTarget = null;
-    
-    treeContainer.innerHTML = "";
-
-    function createNodeElement(node, level = 0) {
-      const li = document.createElement("li");
-      li.dataset.id = node.id;
-      li.style.marginLeft = (level * 12) + "px";
-
-      // Rendre l'élément draggable (sauf le dossier racine)
-      if (node.id !== "root") {
-        li.draggable = true;
-        li.classList.add('draggable');
+    function renderNode(node, level = 0) {
+        const li = document.createElement('li');
+        const nodeElement = document.createElement('div');
+        nodeElement.className = 'tree-node-line';
+        nodeElement.dataset.id = node.id;
+        nodeElement.style.marginLeft = `${level * 16}px`;
         
-        // Attacher les event listeners sur l'élément LI
-        li.addEventListener('dragstart', handleDragStart);
-        li.addEventListener('dragover', handleDragOver);
-        li.addEventListener('dragleave', handleDragLeave);
-        li.addEventListener('drop', handleDrop);
-        li.addEventListener('dragend', handleDragEnd);
-      }
-
-      // Test simple pour vérifier que l'élément est cliquable
-      li.addEventListener('click', (e) => {
-        if (e.target.closest('.drag-handle')) {
+        // Ajouter la classe 'folder' pour les dossiers
+        if (node.type === 'folder') {
+            nodeElement.classList.add('folder');
         }
-      });
-
-      const line = document.createElement("div");
-      line.className = "tree-node-line";
-
-      if (node.type === "folder") {
-        // Ajouter le handle de drag (sauf pour le dossier racine)
-        if (node.id !== "root") {
-          const dragHandle = document.createElement("span");
-          dragHandle.className = "drag-handle";
-          dragHandle.innerHTML = "⋮⋮";
-          dragHandle.title = "Glisser pour déplacer";
-          line.appendChild(dragHandle);
+        
+        // Test visuel - ajouter une bordure de base pour vérifier que les styles s'appliquent
+        nodeElement.style.border = '1px solid transparent';
+        
+        const hasChildren = node.children && node.children.length > 0;
+        const isExpanded = node.expanded !== false;
+        
+        let html = '';
+        
+        if (node.type === 'folder') {
+            const toggleIcon = hasChildren ? 
+                (isExpanded ? 'expand_more' : 'chevron_right') : 
+                'chevron_right';
+            
+            // Ne pas afficher le bouton de suppression pour le dossier root
+            const deleteButton = node.id === 'root' ? '' : 
+                `<span class="material-icons" data-action="deleteNode" data-id="${node.id}" title="Supprimer">delete</span>`;
+            
+            html += `
+                <span class="material-icons toggle-icon" data-action="toggle" data-id="${node.id}" style="${hasChildren ? '' : 'opacity: 0.3;'}">${toggleIcon}</span>
+                <span class="material-icons">${node.id === 'root' ? 'home' : 'folder'}</span>
+                <span class="folder-name">${node.name}</span>
+                <span class="folder-counter">${countChatsInFolder(node)}</span>
+                <div class="edit-btns">
+                    <span class="material-icons" data-action="addChat" data-id="${node.id}" title="Ajouter un chat">add_comment</span>
+                    <span class="material-icons" data-action="addFolder" data-id="${node.id}" title="Ajouter un dossier">create_new_folder</span>
+                    <span class="material-icons" data-action="editNode" data-id="${node.id}" title="Modifier">edit</span>
+                    ${deleteButton}
+                </div>
+            `;
+        } else {
+            html += `
+                <span class="material-icons">chat</span>
+                <a href="${node.link}" class="chat-link" target="_blank">${node.name}</a>
+                <div class="edit-btns">
+                    <span class="material-icons" data-action="editNode" data-id="${node.id}" title="Modifier">edit</span>
+                    <span class="material-icons" data-action="deleteNode" data-id="${node.id}" title="Supprimer">delete</span>
+                </div>
+            `;
         }
-
-        const toggle = document.createElement("span");
-        toggle.className = "toggle-icon";
-        toggle.textContent = node.expanded ? "▼" : "▶";
-        toggle.title = node.expanded ? "Réduire le dossier" : "Développer le dossier";
-        toggle.style.cursor = "pointer";
-        toggle.addEventListener("click", () => {
-          node.expanded = !node.expanded;
-          saveData();
-          renderTree();
+        
+        nodeElement.innerHTML = html;
+        
+        // Ajouter les event listeners pour les boutons d'action
+        const actionButtons = nodeElement.querySelectorAll('[data-action]');
+        console.log(`Attachement des boutons d'action pour ${node.id}:`, actionButtons.length, 'boutons trouvés');
+        actionButtons.forEach(button => {
+            const action = button.dataset.action;
+            const id = button.dataset.id;
+            console.log(`Attachement du bouton ${action} pour l'ID ${id}`);
+            
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                console.log(`Clic sur le bouton ${action} pour l'ID ${id}`);
+                
+                switch(action) {
+                    case 'toggle':
+                        toggleFolder(id);
+                        break;
+                    case 'addChat':
+                        addChat(id);
+                        break;
+                    case 'addFolder':
+                        addFolder(id);
+                        break;
+                    case 'editNode':
+                        editNode(id);
+                        break;
+                    case 'deleteNode':
+                        deleteNode(id);
+                        break;
+                }
+            });
         });
-        line.appendChild(toggle);
-
-        const folderNameSpan = document.createElement("span");
-        folderNameSpan.textContent = node.name;
-        folderNameSpan.className = "folder-name";
-        folderNameSpan.style.marginLeft = "5px";
-        line.appendChild(folderNameSpan);
-
-        // Ajouter le compteur de chats pour tous les dossiers
-        const chatCount = countChatsInFolder(node);
-        if (chatCount > 0) {
-          const countBadge = document.createElement("span");
-          countBadge.className = node.id === "root" ? "chat-count-badge root-badge" : "chat-count-badge";
-          countBadge.textContent = chatCount;
-          
-          // Infobulle différente selon le type de dossier
-          if (node.id === "root") {
-            countBadge.title = `📊 ${chatCount} chat${chatCount > 1 ? 's' : ''} au total dans tous vos dossiers et sous-dossiers`;
-          } else {
-            countBadge.title = `📁 ${chatCount} chat${chatCount > 1 ? 's' : ''} dans ce dossier et ses sous-dossiers`;
-          }
-          
-          line.appendChild(countBadge);
+        
+        li.appendChild(nodeElement);
+        
+        // Créer la liste des enfants si c'est un dossier
+        if (node.type === 'folder' && hasChildren && isExpanded) {
+            const ul = document.createElement('ul');
+            // Trier les enfants avant de les afficher
+            const sortedChildren = sortChildren(node.children);
+            sortedChildren.forEach(child => {
+                const childLi = renderNode(child, level + 1);
+                ul.appendChild(childLi);
+            });
+            li.appendChild(ul);
         }
-
-        const addFolderBtn = document.createElement("button");
-        addFolderBtn.className = "btn-green btn-small";
-        addFolderBtn.title = "Ajouter un sous-dossier";
-        addFolderBtn.innerHTML = "📁➕";
-        addFolderBtn.style.fontSize = "14px";
-        addFolderBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          currentEditNode = null; // Reset pour création
-          currentAddParentId = node.id;  // Important : on positionne le parent ici
-          openEditFolderForm();
-        });
-        line.appendChild(addFolderBtn);
-
-        const addChatBtn = document.createElement("button");
-        addChatBtn.className = "btn-green btn-small";
-        addChatBtn.title = "Ajouter un chat dans ce dossier";
-        addChatBtn.innerHTML = "💬➕";
-        addChatBtn.style.fontSize = "14px";
-        addChatBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          currentEditNode = null; // Reset pour création
-          currentAddParentId = node.id; // Important : idem, on garde bien le dossier cible
-          openEditChatForm();
-        });
-        line.appendChild(addChatBtn);
-
-        const editBtn = document.createElement("button");
-        editBtn.innerHTML = "✏️";
-        editBtn.className = "edit-btn";
-        editBtn.title = "Modifier le nom du dossier";
-        editBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          addToDebugZone("Edit button clicked for folder:", node.name);
-          currentEditNode = node;
-          addToDebugZone("currentEditNode set to:", currentEditNode);
-          openEditFolderForm(node);
-        });
-        line.appendChild(editBtn);
-
-        if (node.id !== "root") {
-          const delBtn = document.createElement("button");
-          delBtn.innerHTML = "🗑️";
-          delBtn.className = "edit-btn";
-          delBtn.title = "Supprimer ce dossier et son contenu";
-          delBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            if (confirm(`Confirmer la suppression du dossier "${node.name}" et de tout son contenu ?`)) {
-              if (deleteNodeById(data, node.id)) {
-                saveData();
-                renderTree();
-                hideForms();
-              }
-            }
-          });
-          line.appendChild(delBtn);
-        }
-
-        li.appendChild(line);
-
-        if (node.expanded && node.children && node.children.length) {
-          // Tri : dossiers d'abord, puis chats, puis ordre alphabétique
-          const sortedChildren = [...node.children].sort((a, b) => {
-            if (a.type !== b.type) {
-              return a.type === "folder" ? -1 : 1;
-            }
-            return a.name.localeCompare(b.name, 'fr', {sensitivity: 'base'});
-          });
-          const ul = document.createElement("ul");
-          ul.style.listStyleType = "none";
-          ul.style.paddingLeft = "0";
-          for (const child of sortedChildren) {
-            ul.appendChild(createNodeElement(child, level + 1));
-          }
-          li.appendChild(ul);
-        }
-      } else if (node.type === "chat") {
-        // Ajouter le handle de drag pour les chats
-        const dragHandle = document.createElement("span");
-        dragHandle.className = "drag-handle";
-        dragHandle.innerHTML = "⋮⋮";
-        dragHandle.title = "Glisser pour déplacer";
-        line.appendChild(dragHandle);
-
-        const chatLinkSpan = document.createElement("span");
-        chatLinkSpan.textContent = node.name;
-        chatLinkSpan.className = "chat-name";
-        chatLinkSpan.title = node.link;
-        chatLinkSpan.addEventListener("click", () => {
-          chrome.tabs.create({ url: node.link });
-        });
-        line.appendChild(chatLinkSpan);
-
-        const editBtn = document.createElement("button");
-        editBtn.innerHTML = "✏️";
-        editBtn.className = "edit-btn";
-        editBtn.title = "Modifier le chat";
-        editBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          currentEditNode = node;
-          openEditChatForm(node);
-        });
-        line.appendChild(editBtn);
-
-        const delBtn = document.createElement("button");
-        delBtn.innerHTML = "🗑️";
-        delBtn.className = "edit-btn";
-        delBtn.title = "Supprimer ce chat";
-        delBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          if (confirm(`Confirmer la suppression du chat "${node.name}" ?`)) {
-            if (deleteNodeById(data, node.id)) {
-              saveData();
-              renderTree();
-              hideForms();
-            }
-          }
-        });
-        line.appendChild(delBtn);
-
-        li.appendChild(line);
-      }
-
-      return li;
+        
+        return li;
     }
-
-    const ulRoot = document.createElement("ul");
-    ulRoot.style.listStyleType = "none";
-    ulRoot.style.paddingLeft = "0";
-
-    // Créer un LI pour le dossier racine, qui sera droppable
-    const rootLi = document.createElement("li");
-    rootLi.dataset.id = data.id;
-    rootLi.classList.add('drop-zone');
-    rootLi.addEventListener('dragover', handleDragOver);
-    rootLi.addEventListener('dragleave', handleDragLeave);
-    rootLi.addEventListener('drop', handleDrop);
-    rootLi.addEventListener('dragend', handleDragEnd);
     
-    // Afficher l'arbre à partir du dossier racine (sans doublon du titre)
-    rootLi.appendChild(createNodeElement(data));
-    ulRoot.appendChild(rootLi);
-    treeContainer.appendChild(ulRoot);
+    const rootUl = document.createElement('ul');
+    const rootLi = renderNode(data);
+    rootUl.appendChild(rootLi);
+    treeContainer.appendChild(rootUl);
   }
 
   function hideForms() {
     addFolderForm.style.display = "none";
     addChatForm.style.display = "none";
-    // Ne pas reset currentEditNode ici car on en a besoin pour l'édition
-    // currentEditNode = null;
-    // Ne pas reset currentAddParentId ici pour garder contexte si on veut ajouter plusieurs éléments dans même dossier
-  }
-
-  // Fonction pour ajouter un message à la zone de debug
-  function addToDebugZone(message, data = null) {
-    const debugZone = document.getElementById('debug-zone');
-    const debugContent = document.getElementById('debug-content');
-    
-    if (debugZone && debugContent) {
-      const timestamp = new Date().toLocaleTimeString();
-      const logEntry = document.createElement('div');
-      logEntry.style.marginBottom = '2px';
-      logEntry.style.borderBottom = '1px solid #ddd';
-      logEntry.style.paddingBottom = '2px';
-      
-      let content = `[${timestamp}] ${message}`;
-      if (data) {
-        content += `: ${JSON.stringify(data).substring(0, 100)}...`;
-      }
-      
-      logEntry.textContent = content;
-      debugContent.appendChild(logEntry);
-      
-      // Garder seulement les 10 derniers logs
-      while (debugContent.children.length > 10) {
-        debugContent.removeChild(debugContent.firstChild);
-      }
-      
-      // Scroll vers le bas
-      debugZone.scrollTop = debugZone.scrollHeight;
-    }
   }
 
   function openEditFolderForm(node) {
     hideForms();
     addFolderForm.style.display = "block";
     
-    // Debug temporaire
-    addToDebugZone("openEditFolderForm called with node:", node);
-    addToDebugZone("currentEditNode:", currentEditNode);
-    
     if (node) {
       folderNameInput.value = node.name;
-      addToDebugZone("Setting folder name to:", node.name);
     } else {
       folderNameInput.value = "";
-      addToDebugZone("Clearing folder name");
     }
     folderNameInput.focus();
 
-    addFolderForm.onsubmit = (e) => {
+    addFolderForm.querySelector('form').onsubmit = (e) => {
       e.preventDefault();
       const name = folderNameInput.value.trim();
       if (!name) return alert("Le nom du dossier est obligatoire.");
 
-      addToDebugZone("Form submitted with name:", name);
-      addToDebugZone("currentEditNode:", currentEditNode);
-
       if (currentEditNode) {
-        addToDebugZone("Editing existing folder:", currentEditNode.name + " -> " + name);
         currentEditNode.name = name;
       } else {
-        addToDebugZone("Creating new folder in parent:", currentAddParentId);
         const parent = findById(data, currentAddParentId);
         if (!parent || parent.type !== "folder") {
           alert("Dossier parent introuvable.");
@@ -713,7 +623,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
       saveData();
-      currentEditNode = null; // Reset après édition/création
+      currentEditNode = null;
       hideForms();
       renderTree();
     };
@@ -731,7 +641,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     chatNameInput.focus();
 
-    addChatForm.onsubmit = (e) => {
+    addChatForm.querySelector('form').onsubmit = (e) => {
       e.preventDefault();
       const name = chatNameInput.value.trim();
       const link = chatLinkInput.value.trim();
@@ -769,24 +679,133 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadData().then(() => {
     renderTree();
+    
+    // Ajouter les event listeners de drag & drop au niveau du conteneur
+    attachDragListeners();
   });
 
-  // Fonction pour afficher/masquer la zone de debug
-  function toggleDebugZone() {
-    const debugZone = document.getElementById('debug-zone');
-    if (debugZone) {
-      if (debugZone.style.display === 'none') {
-        debugZone.style.display = 'block';
-      } else {
-        debugZone.style.display = 'none';
+  function addLog(message) {
+    const logsContent = document.getElementById('logs-content');
+    if (logsContent) {
+        const timestamp = new Date().toLocaleTimeString();
+        const logEntry = document.createElement('div');
+        logEntry.textContent = `[${timestamp}] ${message}`;
+        logsContent.appendChild(logEntry);
+        logsContent.scrollTop = logsContent.scrollHeight;
+    }
+  }
+
+  function logMessage(message) {
+    addLog(message);
+  }
+
+  // Fonctions pour les boutons d'action
+  function addChat(parentId) {
+    console.log('Fonction addChat appelée avec parentId:', parentId);
+    currentAddParentId = parentId;
+    openEditChatForm();
+  }
+
+  function addFolder(parentId) {
+    console.log('Fonction addFolder appelée avec parentId:', parentId);
+    currentAddParentId = parentId;
+    openEditFolderForm();
+  }
+
+  function editNode(nodeId) {
+    console.log('Fonction editNode appelée avec nodeId:', nodeId);
+    const node = findById(data, nodeId);
+    if (!node) return;
+    
+    currentEditNode = node;
+    if (node.type === 'folder') {
+      openEditFolderForm(node);
+    } else {
+      openEditChatForm(node);
+    }
+  }
+
+  function deleteNode(nodeId) {
+    console.log('Fonction deleteNode appelée avec nodeId:', nodeId);
+    const node = findById(data, nodeId);
+    if (!node) return;
+    
+    if (node.type === 'folder' && node.id === 'root') {
+      alert('Le dossier racine ne peut pas être supprimé.');
+      return;
+    }
+    
+    const confirmMessage = node.type === 'folder' 
+      ? `Êtes-vous sûr de vouloir supprimer le dossier "${node.name}" ? Les chats seront déplacés vers le dossier parent.`
+      : `Êtes-vous sûr de vouloir supprimer le chat "${node.name}" ?`;
+    
+    if (confirm(confirmMessage)) {
+      const parent = findParentNode(data, nodeId);
+      if (parent) {
+        if (node.type === 'folder') {
+          // Déplacer tous les chats vers le parent avant de supprimer le dossier
+          moveAllChatsToParent(node, parent);
+        }
+        deleteNodeById(parent, nodeId);
+        saveData();
+        renderTree();
+        addLog(`Suppression: ${node.name}`);
       }
     }
   }
 
-  // Fonction de debug pour tester le drag and drop
-  function debugDragAndDrop() {
+  function toggleFolder(folderId) {
+    console.log('Fonction toggleFolder appelée avec folderId:', folderId);
+    const folder = findById(data, folderId);
+    console.log('Dossier trouvé:', folder);
+    
+    if (folder && folder.type === 'folder') {
+      const wasExpanded = folder.expanded;
+      folder.expanded = !folder.expanded;
+      console.log(`Dossier ${folder.name}: ${wasExpanded} -> ${folder.expanded}`);
+      
+      saveData();
+      renderTree();
+      addLog(`Toggle dossier: ${folder.name} - ${folder.expanded ? 'ouvert' : 'fermé'}`);
+    } else {
+      console.log('Dossier non trouvé ou pas un dossier:', folder);
+      addLog(`Erreur toggle: dossier ${folderId} non trouvé`);
+    }
   }
 
-  // Exposer les fonctions de debug globalement pour les tests
-  window.debugDragAndDrop = debugDragAndDrop;
+  function addDropLineIndicator(dropZone) {
+    // Supprimer l'ancien indicateur s'il existe
+    removeDropLineIndicator(dropZone);
+    
+    // Créer un nouvel indicateur
+    const indicator = document.createElement('div');
+    indicator.className = 'drop-line-indicator';
+    indicator.style.top = '0';
+    
+    // Ajouter l'indicateur au début de la zone de drop
+    dropZone.insertBefore(indicator, dropZone.firstChild);
+    
+    // Animer l'apparition
+    setTimeout(() => {
+        indicator.classList.add('show');
+    }, 10);
+  }
+
+  function removeDropLineIndicator(dropZone) {
+    const existingIndicator = dropZone.querySelector('.drop-line-indicator');
+    if (existingIndicator) {
+        existingIndicator.classList.remove('show');
+        setTimeout(() => {
+            if (existingIndicator.parentNode) {
+                existingIndicator.parentNode.removeChild(existingIndicator);
+            }
+        }, 300);
+    }
+  }
+
+  function handleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    console.log('handleDragOver appelé sur:', e.target.closest('.tree-node-line')?.dataset.id);
+  }
 });

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>ChatGPT Manager</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="light-mode">
+  <div class="header">
+    <h1>ChatGPT Manager</h1>
+    <div class="header-actions">
+      <button id="toggle-theme" title="Basculer le thème">
+        <span class="material-icons">light_mode</span>
+      </button>
+      <button id="fullscreen-btn" title="Plein écran">
+        <span class="material-icons">fullscreen</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="message-bar">📌 Cette extension est en cours de développement</div>
+
+  <div class="search-bar">
+    <input type="text" placeholder="Rechercher un chat ou un dossier..." />
+    <button title="Tout ouvrir"><span class="material-icons">unfold_more</span></button>
+    <button title="Tout fermer"><span class="material-icons">unfold_less</span></button>
+  </div>
+
+  <div id="tree-container">
+    <ul>
+      <li>
+        <div class="tree-node-line">
+          <span class="material-icons">home</span>
+          <span class="folder-name">Mes Chats</span>
+          <span class="folder-counter">4</span>
+          <div class="edit-btns">
+            <span class="material-icons" title="Ajouter un dossier">create_new_folder</span>
+            <span class="material-icons" title="Ajouter un chat">add_comment</span>
+          </div>
+        </div>
+        <ul>
+          <li>
+            <div class="tree-node-line">
+              <span class="material-icons">folder</span>
+              <span class="folder-name">Projets IA</span>
+              <span class="folder-counter">2</span>
+              <div class="edit-btns">
+                <span class="material-icons" title="Ajouter un dossier">create_new_folder</span>
+                <span class="material-icons" title="Ajouter un chat">add_comment</span>
+                <span class="material-icons" title="Renommer">edit</span>
+                <span class="material-icons" title="Supprimer">delete</span>
+              </div>
+            </div>
+            <ul>
+              <li>
+                <div class="tree-node-line">
+                  <span class="material-icons">chat</span>
+                  <a href="https://chat.openai.com/chat/abc" class="chat-link">Bot RH</a>
+                  <span class="tag">#work</span>
+                  <div class="edit-btns">
+                    <span class="material-icons">edit</span>
+                    <span class="material-icons">delete</span>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="tree-node-line">
+                  <span class="material-icons">chat</span>
+                  <a href="https://chat.openai.com/chat/xyz" class="chat-link">Agent Marketing</a>
+                  <div class="edit-btns">
+                    <span class="material-icons">edit</span>
+                    <span class="material-icons">delete</span>
+                  </div>
+                </div>
+              </li>
+
+              <!-- Formulaire intégré -->
+              <li class="form-inline-box">
+                <form>
+                  <input type="text" placeholder="Nom du chat" required />
+                  <input type="url" placeholder="Lien vers le chat" required />
+                  <button type="submit"><span class="material-icons">check</span></button>
+                  <button type="button"><span class="material-icons">close</span></button>
+                </form>
+              </li>
+            </ul>
+          </li>
+
+          <li>
+            <div class="tree-node-line">
+              <span class="material-icons">folder</span>
+              <span class="folder-name">Archives</span>
+              <span class="folder-counter">0</span>
+              <div class="edit-btns">
+                <span class="material-icons" title="Ajouter un dossier">create_new_folder</span>
+                <span class="material-icons" title="Ajouter un chat">add_comment</span>
+                <span class="material-icons" title="Renommer">edit</span>
+                <span class="material-icons" title="Supprimer">delete</span>
+              </div>
+            </div>
+            <ul>
+              <!-- Dossier vide -->
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</body>
+</html>

@@ -4,9 +4,19 @@ Une extension Chrome pour organiser et gérer vos conversations ChatGPT et autre
 
 ## Fonctionnalités
 
+### Version 1.2.0
+- **Nouveau design moderne** : Interface complètement repensée avec Material Design
+- **Mode sombre/clair** : Basculement entre thème clair et sombre
+- **Barre de recherche** : Interface pour rechercher chats et dossiers (à implémenter)
+- **Boutons tout ouvrir/fermer** : Interface pour développer/réduire tous les dossiers (à implémenter)
+- **Icônes Material Design** : Remplacement des emojis par des icônes professionnelles
+- **Tags pour les chats** : Support visuel pour les tags (à implémenter)
+- **Interface plus épurée** : Design moderne avec meilleure hiérarchie visuelle
+
 ### Version 1.1.1
 - **Fenêtre dédiée** : Ouverture dans une fenêtre de 800x600 pixels au lieu d'une popup limitée
 - **Version plein écran** : Nouveau fichier `full.html` pour une utilisation en mode plein écran
+- **Interface épurée** : Boutons Reset et Logs masqués par défaut pour une interface plus propre
 
 ### Version 1.1.0
 - **Compteur de chats** : Affichage du nombre de chats contenus dans chaque dossier (y compris les sous-dossiers)

@@ -1,170 +1,77 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
   <title>ChatGPT Manager</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    html, body {
-      width: 400px;
-      height: 600px;
-      margin: 0; padding: 10px;
-      font-family: Arial, sans-serif;
-      box-sizing: border-box;
-      overflow: auto;
-    }
-    #app {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-    }
-    #tree-container {
-      flex: 1 1 auto;
-      overflow-y: auto;
-      border: 1px solid #ccc;
-      padding: 10px;
-      background: #f9f9f9;
-      margin-bottom: 10px;
-    }
-    /* Boutons globaux supprimés pour éviter confusion */
-    /* .buttons-global {
-      margin-bottom: 10px;
-      display: flex;
-      gap: 10px;
-    } */
-    button {
-      cursor: pointer;
-      padding: 6px 12px;
-      font-size: 14px;
-    }
-    .btn-green {
-      background-color: #4caf50;
-      border: none;
-      color: white;
-      border-radius: 4px;
-    }
-    .btn-green:hover {
-      background-color: #45a049;
-    }
-    .btn-red {
-      background-color: #f44336;
-      border: none;
-      color: white;
-      border-radius: 4px;
-    }
-    .btn-red:hover {
-      background-color: #d73220;
-    }
-    .popup-form {
-      background: white;
-      border: 1px solid #ccc;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 4px;
-    }
-    .popup-form label {
-      display: block;
-      margin-bottom: 4px;
-      margin-top: 8px;
-    }
-    .popup-form input[type="text"],
-    .popup-form input[type="url"] {
-      width: 100%;
-      padding: 6px;
-      box-sizing: border-box;
-      font-size: 14px;
-    }
-    .form-buttons {
-      margin-top: 10px;
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-    }
-    /* Style boutons petits pour ajout dans dossier */
-    .btn-small {
-      font-size: 12px;
-      padding: 2px 6px;
-      margin-left: 8px;
-      border-radius: 3px;
-      vertical-align: middle;
-    }
-    .tree-node-line {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .folder-name {
-      font-weight: bold;
-      cursor: default;
-      flex-grow: 1;
-    }
-    .chat-name {
-      cursor: pointer;
-      flex-grow: 1;
-      color: #007bff;
-      text-decoration: underline;
-    }
-    .edit-btn {
-      cursor: pointer;
-      background: none;
-      border: none;
-      font-size: 14px;
-      padding: 0 6px;
-      color: #555;
-    }
-    .edit-btn:hover {
-      color: #000;
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <div id="app">
-    <div class="header">
-      <h1>ChatGPT Manager v1.1.1</h1>
-      <p>Organisez vos conversations ChatGPT en dossiers</p>
+<body class="light-mode">
+  <div class="header">
+    <h1>ChatGPT Manager v1.2.1</h1>
+    <div class="header-actions">
+      <button id="toggle-theme" title="Basculer le thème">
+        <span class="material-icons">light_mode</span>
+      </button>
+      <button id="fullscreen-btn" title="Plein écran">
+        <span class="material-icons">fullscreen</span>
+      </button>
     </div>
-    <div class="info-banner">
-      <strong>Nouveau en v1.1.0 :</strong> Compteur de chats sur chaque dossier !<br>
-      <strong>Nouveau en v1.0.7 :</strong> Glissez-déposez les chats et dossiers avec l'icône ⋮⋮ pour les réorganiser !<br>
-      <small>💡 Conseil : Cliquez sur l'icône ⋮⋮ et maintenez pour commencer le glissement</small><br>
-      <div class="info-section">
-        <p>💡 <strong>Astuce</strong> : Utilisez le glisser-déposer pour organiser vos chats et dossiers !</p>
-        <button id="resetBtn" class="reset-btn" style="display: none;">Reset</button>
-        <button id="logsBtn" class="logs-btn" style="display: none;">Logs</button>
-      </div>
-    </div>
-    <div id="tree-container"></div>
-    
-    <!-- Zone de debug -->
-    <div id="debug-zone" style="background-color: #f5f5f5; border: 1px solid #ccc; border-radius: 4px; padding: 8px; margin-top: 10px; font-size: 11px; max-height: 100px; overflow-y: auto; display: none;">
-      <strong>Debug Logs:</strong>
-      <div id="debug-content"></div>
-    </div>
-
-    <!-- Formulaire ajout/édition dossier -->
-    <form id="add-folder-form" class="popup-form" style="display:none;">
-      <label for="folder-name">Nom du dossier :</label>
-      <input type="text" id="folder-name" name="folder-name" required autocomplete="off" />
-      <div class="form-buttons">
-        <button type="submit" class="btn-green">Valider</button>
-        <button type="button" id="cancel-folder" class="btn-red">Annuler</button>
-      </div>
-    </form>
-
-    <!-- Formulaire ajout/édition chat -->
-    <form id="add-chat-form" class="popup-form" style="display:none;">
-      <label for="chat-name">Nom du chat :</label>
-      <input type="text" id="chat-name" name="chat-name" required autocomplete="off" />
-      <label for="chat-link">Lien du chat ChatGPT :</label>
-      <input type="url" id="chat-link" name="chat-link" required placeholder="https://chat.openai.com/..." />
-      <div class="form-buttons">
-        <button type="submit" class="btn-green">Valider</button>
-        <button type="button" id="cancel-chat" class="btn-red">Annuler</button>
-      </div>
-    </form>
   </div>
 
+  <div class="message-bar">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span>📌 Cette extension est en cours de développement</span>
+      <div style="display: flex; gap: 8px;">
+        <button id="resetBtn" class="debug-btn">🔄 Reset</button>
+        <button id="logsBtn" class="debug-btn">📋 Logs</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="search-bar">
+    <input type="text" placeholder="Rechercher un chat ou un dossier..." />
+    <button title="Tout ouvrir"><span class="material-icons">unfold_more</span></button>
+    <button title="Tout fermer"><span class="material-icons">unfold_less</span></button>
+  </div>
+
+  <div id="tree-container">
+    <!-- Le contenu sera généré dynamiquement par JavaScript -->
+  </div>
+
+  <!-- Formulaires cachés pour l'édition -->
+  <div id="folder-form" style="display: none;">
+    <form id="new-folder-form">
+      <label for="folder-name">Nom du dossier :</label>
+      <input type="text" id="folder-name" required>
+      <button type="submit" class="btn-green">Créer</button>
+      <button type="button" id="cancel-folder">Annuler</button>
+    </form>
+  </div>
+  
+  <div id="chat-form" style="display: none;">
+    <form id="new-chat-form">
+      <label for="chat-name">Nom du chat :</label>
+      <input type="text" id="chat-name" required>
+      <label for="chat-link">Lien du chat :</label>
+      <input type="url" id="chat-link" required>
+      <button type="submit" class="btn-green">Créer</button>
+      <button type="button" id="cancel-chat">Annuler</button>
+    </form>
+  </div>
+  
+  <!-- Zone de debug -->
+  <div id="debug-area" style="display: none; margin-top: 20px; padding: 10px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto;">
+    <strong>Zone de Debug :</strong>
+    <div id="debug-content"></div>
+  </div>
+  
+  <!-- Zone de logs -->
+  <div id="logs-container" class="logs-container">
+    <strong>Logs de Drag & Drop :</strong>
+    <div id="logs-content"></div>
+  </div>
+  
   <script src="popup.js"></script>
 </body>
 </html>

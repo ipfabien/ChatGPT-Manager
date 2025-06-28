@@ -1,13 +1,17 @@
 {
   "manifest_version": 3,
   "name": "ChatGPT Manager",
-  "version": "1.1.1",
-  "description": "Gestionnaire d'onglets ChatGPT avec dossiers et chats.",
-  "permissions": ["storage", "tabs"],
+  "version": "1.2.1",
+  "description": "Organisez vos chats IA dans des dossiers avec drag & drop",
+  "permissions": [
+    "storage",
+    "tabs"
+  ],
   "action": {
     "default_icon": "icon.png"
   },
   "icons": {
+    "48": "icon.png",
     "128": "icon.png"
   },
   "background": {

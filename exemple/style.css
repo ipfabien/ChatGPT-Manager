@@ -1,0 +1,256 @@
+/* RESET + base */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  background-color: #f9f9f9;
+  color: #222;
+  min-width: 800px;
+  max-width: 100%;
+  height: 100%;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Dark mode */
+body.dark-mode {
+  background-color: #1e1e1e;
+  color: #ddd;
+}
+
+body.dark-mode .tree-node-line,
+body.dark-mode .form-inline-box form {
+  background-color: #2a2a2a;
+}
+
+body.dark-mode .header,
+body.dark-mode .message-bar,
+body.dark-mode .search-bar {
+  background-color: #2f2f2f;
+  border-color: #444;
+}
+
+body.dark-mode input,
+body.dark-mode .form-inline-box input {
+  background-color: #444;
+  color: #fff;
+  border-color: #666;
+}
+
+/* Header */
+.header {
+  background: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #ddd;
+}
+
+.header h1 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.header-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  margin-left: 8px;
+  color: #555;
+}
+
+.header-actions button:hover {
+  color: #000;
+}
+
+/* Message */
+.message-bar {
+  background: #f1f1f1;
+  padding: 6px 16px;
+  border-bottom: 1px solid #ddd;
+  font-size: 13px;
+  color: #555;
+}
+
+/* Search bar */
+.search-bar {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid #ddd;
+  gap: 8px;
+}
+
+.search-bar input {
+  flex-grow: 1;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.search-bar button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #666;
+  cursor: pointer;
+}
+
+.search-bar button:hover {
+  color: #000;
+}
+
+/* Tree container */
+#tree-container {
+  padding: 16px;
+  overflow-y: auto;
+}
+
+ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.tree-node-line {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  transition: background-color 0.2s;
+}
+
+.tree-node-line:hover {
+  background: #eef1f5;
+}
+
+.tree-node-line .material-icons {
+  font-size: 20px;
+  margin-right: 8px;
+  color: #555;
+}
+
+.chat-link {
+  color: #0073e6;
+  text-decoration: none;
+  margin-right: 8px;
+}
+
+.chat-link:hover {
+  text-decoration: underline;
+}
+
+/* Folder name */
+.folder-name {
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+/* Counter */
+.folder-counter {
+  background-color: #e0e0e0;
+  color: #333;
+  border-radius: 12px;
+  padding: 2px 6px;
+  font-size: 12px;
+  margin-right: auto;
+}
+
+/* Tags */
+.tag {
+  background-color: #cce5ff;
+  color: #004085;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 11px;
+  margin-right: auto;
+  margin-left: 4px;
+}
+
+/* Edit buttons */
+.edit-btns {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+}
+
+.edit-btns .material-icons {
+  font-size: 18px;
+  color: #888;
+  cursor: pointer;
+}
+
+.edit-btns .material-icons:hover {
+  color: #000;
+}
+
+body.dark-mode .edit-btns .material-icons:hover {
+  color: #fff;
+}
+
+/* Nested structure indentation */
+.tree-node-line {
+  margin-left: 16px;
+}
+
+ul ul .tree-node-line {
+  margin-left: 32px;
+}
+
+ul ul ul .tree-node-line {
+  margin-left: 48px;
+}
+
+/* Inline form */
+.form-inline-box {
+  margin: 8px 0 8px 32px;
+}
+
+.form-inline-box form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: #f0f0f0;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.form-inline-box input {
+  padding: 6px;
+  font-size: 13px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  min-width: 120px;
+}
+
+.form-inline-box button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #444;
+  font-size: 20px;
+}
+
+.form-inline-box button:hover {
+  color: #000;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 16px;
+  }
+
+  .tree-node-line {
+    flex-wrap: wrap;
+  }
+
+  .edit-btns {
+    margin-top: 6px;
+  }
+}
