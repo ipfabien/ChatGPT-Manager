@@ -478,13 +478,31 @@ ul ul ul .tree-node-line {
 }
 
 .tree-node-line.drag-over::before {
-  content: "📁";
+  content: "folder";
+  font-family: 'Material Icons';
   position: absolute;
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 20px;
+  font-size: 24px;
   animation: bounce 0.6s infinite;
+  color: #2196f3;
+}
+
+/* Icône de drop pour les dossiers */
+.tree-node-line.drag-over.drag-over-folder::before {
+  content: "folder";
+  font-family: 'Material Icons';
+  color: #2196f3;
+}
+
+/* Icône de drop pour les chats */
+.tree-node-line.drag-over.drag-over-chat::before {
+  content: "chat";
+  font-family: 'Material Icons';
+  color: #2196f3;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5));
 }
 
 @keyframes bounce {

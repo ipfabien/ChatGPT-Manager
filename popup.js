@@ -345,6 +345,13 @@ document.addEventListener("DOMContentLoaded", () => {
             e.dataTransfer.effectAllowed = 'move';
             draggedNode.classList.add('dragging');
             
+            // Ajouter une classe selon le type d'élément
+            if (draggedNode.classList.contains('folder')) {
+                draggedNode.classList.add('dragging-folder');
+            } else {
+                draggedNode.classList.add('dragging-chat');
+            }
+            
             // Stocker l'ID de l'élément dragué
             currentDraggedId = nodeId;
             
@@ -375,6 +382,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!targetNode.classList.contains('drag-over')) {
                     console.log(`[${getTime()}] Drag over sur dossier: ${nodeId}`);
                     targetNode.classList.add('drag-over');
+                    
+                    // Ajouter la classe selon le type d'élément en cours de drag
+                    const draggedNode = document.querySelector(`[data-id="${currentDraggedId}"]`);
+                    if (draggedNode && draggedNode.classList.contains('folder')) {
+                        targetNode.classList.add('drag-over-folder');
+                    } else {
+                        targetNode.classList.add('drag-over-chat');
+                    }
+                    
                     console.log(`[${getTime()}] Classe drag-over ajoutée à ${nodeId}, classes actuelles:`, targetNode.className);
                     logMessage(`Survol zone: ${nodeId}`);
                 }
@@ -393,6 +409,15 @@ document.addEventListener("DOMContentLoaded", () => {
             
             if (currentDraggedId && currentDraggedId !== nodeId && targetNode.classList.contains('folder')) {
                 targetNode.classList.add('drag-over');
+                
+                // Ajouter la classe selon le type d'élément en cours de drag
+                const draggedNode = document.querySelector(`[data-id="${currentDraggedId}"]`);
+                if (draggedNode && draggedNode.classList.contains('folder')) {
+                    targetNode.classList.add('drag-over-folder');
+                } else {
+                    targetNode.classList.add('drag-over-chat');
+                }
+                
                 logMessage(`Entrée zone: ${nodeId}`);
             }
         };
@@ -412,6 +437,8 @@ document.addEventListener("DOMContentLoaded", () => {
             
             if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
                 targetNode.classList.remove('drag-over');
+                targetNode.classList.remove('drag-over-folder');
+                targetNode.classList.remove('drag-over-chat');
                 logMessage(`Sortie zone: ${nodeId}`);
             }
         };
@@ -439,6 +466,8 @@ document.addEventListener("DOMContentLoaded", () => {
             // Nettoyer les classes
             document.querySelectorAll('.tree-node-line').forEach(n => {
                 n.classList.remove('drag-over');
+                n.classList.remove('drag-over-folder');
+                n.classList.remove('drag-over-chat');
             });
         };
         
@@ -449,6 +478,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const nodeId = draggedNode.dataset.id;
             console.log(`[${getTime()}] Drag end sur: ${nodeId}`);
             draggedNode.classList.remove('dragging');
+            draggedNode.classList.remove('dragging-folder');
+            draggedNode.classList.remove('dragging-chat');
             logMessage('Fin du drag');
             
             // Réinitialiser l'ID de l'élément dragué
@@ -511,8 +542,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 <span class="folder-name">${node.name}</span>
                 <span class="folder-counter">${countChatsInFolder(node)}</span>
                 <div class="edit-btns">
-                    <span class="material-icons" data-action="addChat" data-id="${node.id}" title="Ajouter un chat">add_comment</span>
-                    <span class="material-icons" data-action="addFolder" data-id="${node.id}" title="Ajouter un dossier">create_new_folder</span>
+                    <span class="material-icons" data-action="addChat" data-id="${node.id}" title="Ajouter un chat">chat_bubble_outline</span>
+                    <span class="material-icons" data-action="addFolder" data-id="${node.id}" title="Ajouter un dossier">folder_open</span>
                     <span class="material-icons" data-action="editNode" data-id="${node.id}" title="Modifier">edit</span>
                     ${deleteButton}
                 </div>

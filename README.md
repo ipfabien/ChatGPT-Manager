@@ -4,6 +4,16 @@ Une extension Chrome pour organiser et gérer vos conversations ChatGPT et autre
 
 ## Fonctionnalités
 
+### Version 1.2.1
+- **Icônes d'ajout plus explicites** : Remplacement des icônes génériques par des icônes plus descriptives
+  - Ajout de chat : `chat_bubble_outline` (bulle de chat)
+  - Ajout de dossier : `folder_open` (dossier ouvert)
+- **Icônes de drop cohérentes** : Utilisation d'icônes Material Design dans la charte graphique bleue
+  - Icône "folder" bleue pour les dossiers
+  - Icône "chat" bleue pour les chats (même icône qu'à gauche du nom)
+  - Ombre portée ajoutée pour améliorer la visibilité de l'icône chat
+- **Amélioration de la visibilité** : L'icône de drop pour les chats est maintenant plus visible grâce à une ombre portée
+
 ### Version 1.2.0
 - **Nouveau design moderne** : Interface complètement repensée avec Material Design
 - **Mode sombre/clair** : Basculement entre thème clair et sombre
@@ -108,6 +118,10 @@ Un mode debug est intégré à l'extension :
 
 ## Versions
 
+- **1.2.1** : Améliorations graphiques - icônes d'ajout plus explicites, icônes de drop cohérentes dans la charte graphique bleue
+- **1.2.0** : Nouveau design moderne avec Material Design, mode sombre/clair, interface épurée
+- **1.1.1** : Fenêtre dédiée et version plein écran
+- **1.1.0** : Compteur de chats dans les dossiers
 - **1.0.7** : Renommage du dossier racine en "🏠 Accueil"
 - **1.0.6** : Ajout du drag and drop pour réorganiser les chats et dossiers, tri automatique, mode debug
 - **1.0.5** : Version de base avec gestion des dossiers et chats
