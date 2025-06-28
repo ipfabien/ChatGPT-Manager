@@ -582,4 +582,273 @@ body.dark-mode .logs-container {
 
 body.dark-mode .log-entry {
   background: rgba(255,255,255,0.05);
+  color: #ccc;
+}
+
+/* Styles pour les résultats de recherche */
+.search-results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 16px;
+  border-radius: 8px;
+}
+
+.search-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: #333;
+}
+
+.clear-search-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #666;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.clear-search-btn:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.search-results-list {
+  padding: 0 16px;
+}
+
+.search-result-item {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 8px;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.search-result-item:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-color: #ccc;
+}
+
+.result-path {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.result-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.result-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.result-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.result-edit-form {
+  margin-top: 8px;
+  padding: 6px 10px;
+  background: #f0f0f0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.search-edit-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-edit-form input {
+  padding: 6px;
+  font-size: 13px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  min-width: 120px;
+}
+
+.search-edit-form button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #444;
+  font-size: 20px;
+}
+
+.search-edit-form button:hover {
+  color: #000;
+}
+
+/* Styles spécifiques pour les boutons d'action */
+.result-actions .view-btn:hover {
+  color: #1976d2;
+  background: #e3f2fd;
+}
+
+.result-actions .edit-btn:hover {
+  color: #f57c00;
+  background: #fff3e0;
+}
+
+.result-actions .delete-btn:hover {
+  color: #d32f2f;
+  background: #ffebee;
+}
+
+.result-actions .material-icons {
+  font-size: 18px;
+  color: #888;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.result-actions .material-icons:hover {
+  color: #000;
+  background: #f0f0f0;
+}
+
+.no-results {
+  padding: 40px 16px;
+  text-align: center;
+}
+
+.no-results-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  color: #666;
+}
+
+.no-results-content .material-icons {
+  font-size: 48px;
+  color: #ccc;
+}
+
+.no-results-content p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.no-results-content p:first-of-type {
+  font-weight: 500;
+  font-size: 16px;
+}
+
+/* Mode sombre pour les résultats de recherche */
+body.dark-mode .search-results-header {
+  background: #2a2a2a;
+  border-color: #444;
+}
+
+body.dark-mode .search-info {
+  color: #ddd;
+}
+
+body.dark-mode .clear-search-btn {
+  color: #aaa;
+}
+
+body.dark-mode .clear-search-btn:hover {
+  background: #444;
+  color: #fff;
+}
+
+body.dark-mode .search-result-item {
+  background: #2a2a2a;
+  border-color: #444;
+}
+
+body.dark-mode .search-result-item:hover {
+  border-color: #666;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+body.dark-mode .result-path {
+  color: #aaa;
+}
+
+body.dark-mode .result-actions .material-icons {
+  color: #aaa;
+}
+
+body.dark-mode .result-actions .material-icons:hover {
+  color: #fff;
+  background: #444;
+}
+
+body.dark-mode .no-results-content {
+  color: #aaa;
+}
+
+body.dark-mode .no-results-content .material-icons {
+  color: #555;
+}
+
+/* Styles spécifiques pour les boutons d'action en mode sombre */
+body.dark-mode .result-actions .view-btn:hover {
+  color: #90caf9;
+  background: #1e3a5f;
+}
+
+body.dark-mode .result-actions .edit-btn:hover {
+  color: #ffb74d;
+  background: #3e2723;
+}
+
+body.dark-mode .result-actions .delete-btn:hover {
+  color: #ef5350;
+  background: #3e2723;
+}
+
+/* Mode sombre pour les formulaires de recherche */
+body.dark-mode .result-edit-form {
+  background: #2a2a2a;
+  border-color: #444;
+}
+
+body.dark-mode .search-edit-form input {
+  background: #444;
+  border-color: #666;
+  color: #fff;
+}
+
+body.dark-mode .search-edit-form button {
+  color: #ccc;
+}
+
+body.dark-mode .search-edit-form button:hover {
+  color: #fff;
 }

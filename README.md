@@ -4,6 +4,15 @@ Une extension Chrome pour organiser et gérer vos conversations ChatGPT et autre
 
 ## Fonctionnalités
 
+### Version 1.2.5
+- **Barre de recherche intelligente** : Recherche en temps réel dans les noms de chats et les tags
+- **Recherche optimisée** : Indexation des données pour des performances optimales
+- **Debounce intelligent** : Recherche déclenchée après 400ms d'inactivité pour éviter les calculs inutiles
+- **Affichage des résultats** : Liste plate avec chemin complet et actions directes
+- **Recherche à partir de 2 caractères** : Évite les recherches trop courtes et non pertinentes
+- **Mode sombre compatible** : Interface de recherche adaptée au thème sombre
+- **Actions intégrées** : Modification et suppression directement depuis les résultats
+
 ### Version 1.2.4
 - **Tags pour les chats** : Ajout d'un champ tag optionnel lors de la création et modification de chats
 - **Affichage des tags** : Les tags sont affichés à côté du nom du chat avec un style élégant
@@ -138,6 +147,7 @@ Un mode debug est intégré à l'extension :
 
 ## Versions
 
+- **1.2.5** : Barre de recherche intelligente, recherche optimisée, debounce intelligent, affichage des résultats, recherche à partir de 2 caractères, mode sombre compatible, actions intégrées
 - **1.2.4** : Tags pour les chats, affichage des tags, champ non obligatoire, style adaptatif, design cohérent
 - **1.2.3** : Boutons tout ouvrir/fermer, navigation rapide, sauvegarde automatique, logs d'activité
 - **1.2.2** : Formulaires inline dans l'arbre - design compact et cohérent, meilleure expérience utilisateur

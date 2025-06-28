@@ -23,8 +23,23 @@ document.addEventListener("DOMContentLoaded", () => {
   // Barre de recherche (mode statique)
   const searchInput = document.querySelector('.search-bar input');
   searchInput.addEventListener('input', function() {
-    // Fonctionnalité à implémenter plus tard
-    console.log('Recherche:', this.value);
+    const query = this.value.trim();
+    
+    // Annuler le timeout précédent
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+    
+    // Si la requête est vide, effacer la recherche
+    if (query === '') {
+      clearSearch();
+      return;
+    }
+    
+    // Déclencher la recherche avec debounce
+    searchTimeout = setTimeout(() => {
+      performSearch(query);
+    }, SEARCH_CONFIG.debounceDelay);
   });
 
   // Boutons tout ouvrir/fermer (mode statique)
@@ -100,8 +115,27 @@ document.addEventListener("DOMContentLoaded", () => {
   let dropTarget = null;
   let currentDraggedId = null; // Variable pour stocker l'ID de l'élément dragué
 
+  // Variables pour la recherche
+  let searchIndex = null;
+  let searchTimeout = null;
+  let isSearchMode = false;
+  let currentSearchQuery = '';
+
+  // Configuration de la recherche
+  const SEARCH_CONFIG = {
+    minLength: 2,
+    debounceDelay: 400,
+    useIndex: true,
+    rebuildIndexOnChange: true
+  };
+
   function saveData() {
     chrome.storage.local.set({ chatManagerData: data });
+    
+    // Reconstruire l'index de recherche si nécessaire
+    if (SEARCH_CONFIG.rebuildIndexOnChange) {
+      rebuildSearchIndex();
+    }
   }
 
   function loadData() {
@@ -120,6 +154,10 @@ document.addEventListener("DOMContentLoaded", () => {
           data = result.chatManagerData;
           if (typeof data.expanded === "undefined") data.expanded = true;
         }
+        
+        // Construire l'index de recherche initial
+        rebuildSearchIndex();
+        
         resolve();
       });
     });
@@ -495,6 +533,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function renderTree() {
+    // Ne pas re-rendre si on est en mode recherche
+    if (isSearchMode) {
+      return;
+    }
+    
     const treeContainer = document.getElementById('tree-container');
     treeContainer.innerHTML = '';
     
@@ -955,5 +998,374 @@ document.addEventListener("DOMContentLoaded", () => {
     saveData();
     renderTree();
     addLog('Tous les dossiers ont été fermés');
+  }
+
+  // Fonctions pour l'indexation et la recherche
+  function buildSearchIndex() {
+    const index = {
+      chats: []
+    };
+    
+    function indexNode(node, path = []) {
+      if (node.type === 'chat') {
+        const nodeInfo = {
+          id: node.id,
+          name: node.name,
+          tag: node.tag || '',
+          link: node.link,
+          path: [...path, node.name]
+        };
+        index.chats.push(nodeInfo);
+      }
+      
+      // Indexer les enfants
+      if (node.children) {
+        const newPath = [...path, node.name];
+        node.children.forEach(child => indexNode(child, newPath));
+      }
+    }
+    
+    indexNode(data);
+    return index;
+  }
+
+  function rebuildSearchIndex() {
+    if (SEARCH_CONFIG.useIndex) {
+      searchIndex = buildSearchIndex();
+      addLog('Index de recherche reconstruit');
+    }
+  }
+
+  function searchChats(query) {
+    if (!SEARCH_CONFIG.useIndex || !searchIndex) {
+      rebuildSearchIndex();
+    }
+    
+    const results = [];
+    const queryLower = query.toLowerCase();
+    
+    searchIndex.chats.forEach(chat => {
+      if (chat.name.toLowerCase().includes(queryLower) ||
+          (chat.tag && chat.tag.toLowerCase().includes(queryLower))) {
+        results.push(chat);
+      }
+    });
+    
+    return results;
+  }
+
+  function performSearch(query) {
+    if (query.length < SEARCH_CONFIG.minLength) {
+      clearSearch();
+      return;
+    }
+    
+    currentSearchQuery = query;
+    isSearchMode = true;
+    
+    const results = searchChats(query);
+    displaySearchResults(results, query);
+    
+    addLog(`Recherche: "${query}" - ${results.length} résultat${results.length > 1 ? 's' : ''} trouvé${results.length > 1 ? 's' : ''}`);
+  }
+
+  function clearSearch() {
+    isSearchMode = false;
+    currentSearchQuery = '';
+    const searchInput = document.querySelector('.search-bar input');
+    if (searchInput) {
+      searchInput.value = '';
+    }
+    renderTree();
+    addLog('Recherche effacée');
+  }
+
+  function displaySearchResults(results, query) {
+    const treeContainer = document.getElementById('tree-container');
+    
+    // Vider le conteneur
+    treeContainer.innerHTML = '';
+    
+    // En-tête de recherche
+    const header = document.createElement('div');
+    header.className = 'search-results-header';
+    header.innerHTML = `
+      <div class="search-info">
+        <span class="material-icons">search</span>
+        <span>Résultats pour "${query}" (${results.length} trouvé${results.length > 1 ? 's' : ''})</span>
+      </div>
+      <button class="clear-search-btn">
+        <span class="material-icons">close</span>
+        Effacer
+      </button>
+    `;
+    
+    // Ajouter l'event listener pour le bouton d'effacement
+    const clearBtn = header.querySelector('.clear-search-btn');
+    clearBtn.addEventListener('click', () => {
+      clearSearch();
+    });
+    
+    treeContainer.appendChild(header);
+    
+    if (results.length === 0) {
+      // Aucun résultat
+      const noResults = document.createElement('div');
+      noResults.className = 'no-results';
+      noResults.innerHTML = `
+        <div class="no-results-content">
+          <span class="material-icons">search_off</span>
+          <p>Aucun résultat trouvé pour "${query}"</p>
+          <p>Essayez avec d'autres mots-clés</p>
+        </div>
+      `;
+      treeContainer.appendChild(noResults);
+    } else {
+      // Liste des résultats
+      const resultsList = document.createElement('div');
+      resultsList.className = 'search-results-list';
+      
+      results.forEach(result => {
+        const resultItem = createSearchResultItem(result);
+        resultsList.appendChild(resultItem);
+      });
+      
+      treeContainer.appendChild(resultsList);
+    }
+  }
+
+  function createSearchResultItem(chat) {
+    const item = document.createElement('div');
+    item.className = 'search-result-item';
+    
+    // Construire le chemin
+    const path = chat.path.join(' > ');
+    
+    item.innerHTML = `
+      <div class="result-path">${path}</div>
+      <div class="result-main">
+        <div class="result-content">
+          <span class="material-icons">chat</span>
+          <a href="${chat.link}" class="chat-link" target="_blank">${chat.name}</a>
+          ${chat.tag ? `<span class="chat-tag">${chat.tag}</span>` : ''}
+        </div>
+        <div class="result-actions">
+          <span class="material-icons view-btn" data-id="${chat.id}" title="Voir dans l'arbre">visibility</span>
+          <span class="material-icons edit-btn" data-id="${chat.id}" title="Modifier">edit</span>
+          <span class="material-icons delete-btn" data-id="${chat.id}" title="Supprimer">delete</span>
+        </div>
+      </div>
+      <div class="result-edit-form" style="display: none;"></div>
+    `;
+    
+    // Ajouter les event listeners pour les actions
+    const viewBtn = item.querySelector('.view-btn');
+    const editBtn = item.querySelector('.edit-btn');
+    const deleteBtn = item.querySelector('.delete-btn');
+    
+    viewBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navigateToChatInTree(chat.id);
+    });
+    
+    editBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showEditFormInline(chat, item);
+    });
+    
+    deleteBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      deleteFromSearch(chat.id, chat.name);
+    });
+    
+    return item;
+  }
+
+  // Fonction pour naviguer vers un chat dans l'arbre
+  function navigateToChatInTree(chatId) {
+    const chat = findById(data, chatId);
+    if (!chat) {
+      addLog(`Erreur: Chat ${chatId} non trouvé`);
+      return;
+    }
+    
+    // Trouver le parent du chat
+    const parent = findParentNode(data, chatId);
+    if (!parent) {
+      addLog(`Erreur: Parent du chat ${chatId} non trouvé`);
+      return;
+    }
+    
+    // Ouvrir tous les dossiers parents jusqu'au chat
+    openAllParentFolders(parent);
+    
+    // Retourner à l'arbre normal
+    clearSearch();
+    
+    // Faire défiler vers l'élément (optionnel)
+    setTimeout(() => {
+      const chatElement = document.querySelector(`[data-id="${chatId}"]`);
+      if (chatElement) {
+        chatElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Ajouter un effet de surbrillance temporaire
+        chatElement.style.backgroundColor = '#e3f2fd';
+        setTimeout(() => {
+          chatElement.style.backgroundColor = '';
+        }, 2000);
+      }
+    }, 100);
+    
+    addLog(`Navigation vers: ${chat.name} dans l'arbre`);
+  }
+
+  // Fonction pour ouvrir tous les dossiers parents
+  function openAllParentFolders(folder) {
+    if (!folder || folder.type !== 'folder') return;
+    
+    folder.expanded = true;
+    
+    // Récursivement ouvrir les parents
+    const parent = findParentNode(data, folder.id);
+    if (parent) {
+      openAllParentFolders(parent);
+    }
+  }
+
+  // Fonction pour supprimer un chat depuis la recherche
+  function deleteFromSearch(chatId, chatName) {
+    const confirmMessage = `Êtes-vous sûr de vouloir supprimer le chat "${chatName}" ?`;
+    
+    if (confirm(confirmMessage)) {
+      // Supprimer le chat
+      const parent = findParentNode(data, chatId);
+      if (parent) {
+        deleteNodeById(parent, chatId);
+        saveData();
+        
+        // Actualiser les résultats de recherche
+        refreshSearchResults();
+        
+        addLog(`Suppression depuis la recherche: ${chatName}`);
+      }
+    }
+  }
+
+  // Fonction pour actualiser les résultats de recherche
+  function refreshSearchResults() {
+    if (!isSearchMode || !currentSearchQuery) return;
+    
+    const results = searchChats(currentSearchQuery);
+    displaySearchResults(results, currentSearchQuery);
+    
+    // Si plus de résultats, afficher un message
+    if (results.length === 0) {
+      addLog('Aucun résultat restant après suppression');
+    } else {
+      addLog(`Résultats actualisés: ${results.length} élément${results.length > 1 ? 's' : ''} restant${results.length > 1 ? 's' : ''}`);
+    }
+  }
+
+  // Fonction pour afficher le formulaire d'édition inline dans les résultats
+  function showEditFormInline(chat, resultItem) {
+    // Masquer tous les autres formulaires de recherche
+    hideAllSearchForms();
+    
+    // Masquer les boutons d'action de cet élément
+    const actionsContainer = resultItem.querySelector('.result-actions');
+    actionsContainer.style.display = 'none';
+    
+    // Créer le formulaire inline
+    const formContainer = resultItem.querySelector('.result-edit-form');
+    formContainer.style.display = 'block';
+    
+    const formHtml = `
+      <form class="search-edit-form">
+        <input type="text" placeholder="Nom du chat" value="${chat.name}" required />
+        <input type="url" placeholder="Lien vers le chat" value="${chat.link}" required />
+        <input type="text" placeholder="Tag (optionnel)" value="${chat.tag || ''}" />
+        <button type="submit"><span class="material-icons">check</span></button>
+        <button type="button" class="cancel-btn"><span class="material-icons">close</span></button>
+      </form>
+    `;
+    
+    formContainer.innerHTML = formHtml;
+    
+    // Focus sur le premier champ
+    const nameInput = formContainer.querySelector('input[type="text"]');
+    nameInput.focus();
+    nameInput.select();
+    
+    // Event listeners
+    const form = formContainer.querySelector('form');
+    const cancelBtn = formContainer.querySelector('.cancel-btn');
+    
+    form.onsubmit = (e) => {
+      e.preventDefault();
+      saveSearchEdit(chat.id, form, resultItem);
+    };
+    
+    cancelBtn.addEventListener('click', () => {
+      hideSearchForm(resultItem);
+    });
+    
+    addLog(`Édition en cours: ${chat.name}`);
+  }
+
+  // Fonction pour sauvegarder l'édition depuis la recherche
+  function saveSearchEdit(chatId, form, resultItem) {
+    const name = form.querySelector('input[type="text"]').value.trim();
+    const link = form.querySelector('input[type="url"]').value.trim();
+    const tag = form.querySelector('input[type="text"]:last-of-type').value.trim();
+    
+    if (!name || !link) {
+      alert("Le nom et le lien du chat sont obligatoires.");
+      return;
+    }
+    
+    // Mettre à jour le chat
+    const chat = findById(data, chatId);
+    if (chat) {
+      chat.name = name;
+      chat.link = link;
+      chat.tag = tag || null;
+      
+      // Sauvegarder et reconstruire l'index
+      saveData();
+      
+      // Actualiser les résultats de recherche
+      refreshSearchResults();
+      
+      addLog(`Modification depuis la recherche: ${name}`);
+    }
+  }
+
+  // Fonction pour masquer un formulaire de recherche spécifique
+  function hideSearchForm(resultItem) {
+    const formContainer = resultItem.querySelector('.result-edit-form');
+    const actionsContainer = resultItem.querySelector('.result-actions');
+    
+    // Masquer le formulaire
+    formContainer.style.display = 'none';
+    formContainer.innerHTML = '';
+    
+    // Réafficher les boutons d'action
+    actionsContainer.style.display = 'flex';
+    
+    addLog('Édition annulée');
+  }
+
+  // Fonction pour masquer tous les formulaires de recherche
+  function hideAllSearchForms() {
+    const allForms = document.querySelectorAll('.result-edit-form');
+    const allActions = document.querySelectorAll('.result-actions');
+    
+    allForms.forEach(form => {
+      form.style.display = 'none';
+      form.innerHTML = '';
+    });
+    
+    allActions.forEach(actions => {
+      actions.style.display = 'flex';
+    });
   }
 });
