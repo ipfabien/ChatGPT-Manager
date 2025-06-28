@@ -4,6 +4,12 @@ Une extension Chrome pour organiser et gérer vos conversations ChatGPT et autre
 
 ## Fonctionnalités
 
+### Version 1.2.3
+- **Boutons tout ouvrir/fermer** : Implémentation des fonctionnalités pour développer ou réduire tous les dossiers en une seule action
+- **Navigation rapide** : Possibilité d'ouvrir ou fermer l'ensemble de l'arborescence instantanément
+- **Sauvegarde automatique** : L'état d'ouverture/fermeture est sauvegardé automatiquement
+- **Logs d'activité** : Les actions sont enregistrées dans les logs pour le suivi
+
 ### Version 1.2.2
 - **Formulaires inline dans l'arbre** : Remplacement des formulaires modaux par des formulaires intégrés directement dans l'arbre
 - **Design compact et cohérent** : Style simple avec fond gris, alignement horizontal et boutons icônes
@@ -125,6 +131,7 @@ Un mode debug est intégré à l'extension :
 
 ## Versions
 
+- **1.2.3** : Boutons tout ouvrir/fermer, navigation rapide, sauvegarde automatique, logs d'activité
 - **1.2.2** : Formulaires inline dans l'arbre - design compact et cohérent, meilleure expérience utilisateur
 - **1.2.1** : Améliorations graphiques - icônes d'ajout plus explicites, icônes de drop cohérentes dans la charte graphique bleue
 - **1.2.0** : Nouveau design moderne avec Material Design, mode sombre/clair, interface épurée

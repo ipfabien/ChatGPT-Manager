@@ -29,13 +29,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Boutons tout ouvrir/fermer (mode statique)
   document.querySelector('.search-bar button[title="Tout ouvrir"]').addEventListener('click', function() {
-    // Fonctionnalité à implémenter plus tard
-    alert('Fonctionnalité "Tout ouvrir" à implémenter');
+    expandAllFolders();
   });
 
   document.querySelector('.search-bar button[title="Tout fermer"]').addEventListener('click', function() {
-    // Fonctionnalité à implémenter plus tard
-    alert('Fonctionnalité "Tout fermer" à implémenter');
+    collapseAllFolders();
   });
 
   // Event listeners pour les boutons de debug
@@ -886,5 +884,39 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
     console.log('handleDragOver appelé sur:', e.target.closest('.tree-node-line')?.dataset.id);
+  }
+
+  // Fonction pour ouvrir tous les dossiers
+  function expandAllFolders() {
+    function expandNode(node) {
+      if (node.type === 'folder') {
+        node.expanded = true;
+        if (node.children && node.children.length > 0) {
+          node.children.forEach(child => expandNode(child));
+        }
+      }
+    }
+    
+    expandNode(data);
+    saveData();
+    renderTree();
+    addLog('Tous les dossiers ont été ouverts');
+  }
+
+  // Fonction pour fermer tous les dossiers
+  function collapseAllFolders() {
+    function collapseNode(node) {
+      if (node.type === 'folder') {
+        node.expanded = false;
+        if (node.children && node.children.length > 0) {
+          node.children.forEach(child => collapseNode(child));
+        }
+      }
+    }
+    
+    collapseNode(data);
+    saveData();
+    renderTree();
+    addLog('Tous les dossiers ont été fermés');
   }
 });
