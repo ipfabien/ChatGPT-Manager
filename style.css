@@ -952,12 +952,6 @@ body.dark-mode .material-icons:focus {
   outline: 2px solid #90caf9;
 }
 
-body.dark-mode button:focus,
-body.dark-mode input:focus,
-body.dark-mode .material-icons:focus {
-  outline: 2px solid #90caf9;
-}
-
 /* Classes pour les tailles de police */
 body.large-font {
   font-size: 16px;

@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "ChatGPT Manager",
+  "description": "Organisez et gérez vos conversations ChatGPT et IA.",
+  "version": "1.3.0",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "ChatGPT Manager"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "icons": {
+    "16": "icon.png",
+    "32": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["full.html", "full.js", "full.css"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+} 

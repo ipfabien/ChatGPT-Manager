@@ -1,0 +1,38 @@
+version: '3'
+
+tasks:
+  test:
+    desc: Lancer tous les tests unitaires Jest
+    dir: ./
+    cmds:
+      - npm install
+      - npm test
+
+  serve:
+    desc: Lancer un serveur web simple pour tester les pages HTML
+    dir: ./
+    cmds:
+      - python -m http.server 8000
+
+  open-full:
+    desc: Ouvrir full.html dans le navigateur (serveur doit être démarré)
+    dir: ./
+    cmds:
+      - start http://localhost:8000/full.html
+
+  test-eventbus-web:
+    desc: Lancer le serveur et ouvrir la page de test EventBus
+    cmds:
+      - task serve &
+      - sleep 2
+      - start "" "http://localhost:8000/test-server.html"
+
+  test-manuel-eventbus:
+    desc: Instructions pour tester manuellement EventBus dans la page
+    cmds:
+      - echo "1. Ouvre la console de la page (F12)"
+      - echo "2. Importe EventBus"
+      - echo "3. Crée une instance"
+      - echo "4. Ajoute un handler"
+      - echo "5. Émets un événement"
+      - echo "6. Retire le handler" 

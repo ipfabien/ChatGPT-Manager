@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Test EventBus</title>
+</head>
+<body>
+    <h1>Test EventBus</h1>
+    <p>Ouvre la console (F12) pour tester EventBus</p>
+    
+    <script>
+        // Classe EventBus pour test
+        class EventBus {
+            constructor() {
+                this.events = {};
+            }
+            
+            on(event, handler) {
+                if (!this.events[event]) {
+                    this.events[event] = [];
+                }
+                this.events[event].push(handler);
+            }
+            
+            off(event, handler) {
+                if (!this.events[event]) return;
+                this.events[event] = this.events[event].filter(h => h !== handler);
+            }
+            
+            emit(event, data) {
+                if (!this.events[event]) return;
+                this.events[event].forEach(handler => handler(data));
+            }
+        }
+
+        // Test automatique au chargement
+        console.log('=== Test EventBus ===');
+        const bus = new EventBus();
+        
+        // Test 1
+        bus.on('test', (data) => console.log('✅ Événement reçu:', data));
+        bus.emit('test', 'Hello World!');
+        
+        // Test 2
+        const handler = (data) => console.log('✅ Handler spécifique:', data);
+        bus.on('test2', handler);
+        bus.emit('test2', 'Premier appel');
+        bus.off('test2', handler);
+        bus.emit('test2', 'Deuxième appel (ne doit rien afficher)');
+        
+        console.log('=== Tests terminés ===');
+        console.log('EventBus est prêt pour utilisation !');
+    </script>
+</body>
+</html> 

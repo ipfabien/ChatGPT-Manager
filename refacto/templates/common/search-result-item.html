@@ -1,0 +1,22 @@
+<div class="tree-node-line search-result-item compact" data-id="{{id}}" tabindex="0">
+  {{#if path}}
+    {{#each path}}
+      <span class="material-icons" aria-hidden="true">{{#if @first}}home{{else}}folder{{/if}}</span><span class="folder-name">{{this}}</span><span class="path-separator"> &gt; </span>
+    {{/each}}
+  {{/if}}
+  <span class="material-icons" aria-hidden="true">{{#if type}}{{type}}{{else}}chat{{/if}}</span>
+  {{#if type}}
+    {{#if (eq type "chat")}}
+      <span class="chat-link">{{name}}</span>
+    {{else}}
+      <span class="folder-name">{{name}}</span>
+    {{/if}}
+  {{else}}
+    <span class="chat-link">{{name}}</span>
+  {{/if}}
+  {{#tag}}<span class="chat-tag">{{tag}}</span>{{/tag}}
+  <div class="edit-btns">
+    <span class="material-icons" data-action="editNode" data-id="{{id}}" title="Modifier" aria-label="Modifier">edit</span>
+    <span class="material-icons" data-action="deleteNode" data-id="{{id}}" title="Supprimer" aria-label="Supprimer">delete</span>
+  </div>
+</div> 

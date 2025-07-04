@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>ChatGPT Manager</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="../icon.png" />
+</head>
+<body class="light-mode">
+  <!-- Header -->
+  <div class="header">
+    <h1>ChatGPT Manager</h1>
+    <div class="header-actions">
+      <button id="help-btn" title="Aide" aria-label="Afficher l'aide">
+        <span class="material-icons" aria-hidden="true">help_outline</span>
+      </button>
+      <button id="fullscreen-btn" title="Mode étendu" aria-label="Ouvrir en mode étendu" onclick="window.open('full.html', '_blank')">
+        <span class="material-icons" aria-hidden="true">open_in_new</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Barre de recherche -->
+  <div class="search-bar">
+    <input type="text" id="popup-search-input" placeholder="Rechercher un chat..." aria-label="Rechercher dans les chats et dossiers" />
+    <button id="add-chat-btn" title="Ajouter un chat" aria-label="Ajouter un chat">+</button>
+  </div>
+
+  <!-- Conteneur principal pour actions et résultats de recherche -->
+  <div class="popup-content-area">
+    <!-- Bloc résultats de recherche (affiché dynamiquement) -->
+    <div id="popup-search-results" style="display:none;"></div>
+
+    <!-- Bloc formulaire d'ajout de chat (affiché dynamiquement) -->
+    <div id="popup-add-chat-form" style="display:none;"></div>
+
+    <!-- Actions rapides -->
+    <div class="quick-actions">
+      <button id="export-data-btn" class="quick-action-btn">
+        <span class="material-icons">file_download</span>
+        Exporter mes données
+      </button>
+      <button id="settings-btn" class="quick-action-btn">
+        <span class="material-icons">settings</span>
+        Paramètres
+      </button>
+    </div>
+
+    <!-- Barre d'actions -->
+    <div class="actions-bar">
+      <button id="add-chat-btn" class="primary-btn">
+        <span class="material-icons">add</span>
+        Ajouter un chat
+      </button>
+      <button id="extended-mode-btn" class="secondary-btn" onclick="window.open('full.html', '_blank')">
+        <span class="material-icons">list</span>
+        Gérer
+      </button>
+    </div>
+  </div>
+
+  <script src="utils/helpers.js"></script>
+  <script src="services/UserPreferences.js"></script>
+  <script src="services/SearchEngine.js"></script>
+  <script src="utils/templates.js"></script>
+  <script src="core/EventBus.js"></script>
+  <script src="managers/UIManager.js"></script>
+  <script src="managers/TreeManager.js"></script>
+  <script src="managers/KeyboardManager.js"></script>
+  <script type="module" src="./popup.js"></script>
+</body>
+</html>
